@@ -102,15 +102,9 @@ public class CSVReader {
             
             Collections.sort(endpointSequence.Sequence);
             
-            System.out.print(i + ": ");
-            for (int j = 0; j < endpointSequence.Sequence.size(); j++){
-                System.out.println(endpointSequence.Sequence);
-                System.out.println(endpointSequence.Sequence.size());
-            }
-            
             output.add(endpointSequence);
             
         }
-        return null;
+        return output;
     }
 }
