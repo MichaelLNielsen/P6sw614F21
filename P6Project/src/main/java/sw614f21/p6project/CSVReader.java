@@ -65,7 +65,7 @@ public class CSVReader {
                 else if (!overThreshold && ongoingEvents.getOrDefault(symbol, false)) {
                     Date startDate = startEndpoints.get(symbol);
                     int startRow = 24*(startDate.Days - 1) + startDate.Hours;
-                    int finishingTime = j-1-startRow+startDate.Hours;
+                    int finishingTime = j-startRow+startDate.Hours;
                     startingSymbols.get(symbol).FinishingTime = finishingTime;
                     startingSymbols.remove(symbol);
                     ongoingEvents.remove(symbol);
@@ -81,5 +81,36 @@ public class CSVReader {
         csvReader.close();
 
         return output;
+    }
+    
+    
+    public static ArrayList<EndpointSequence> GetEndpointSequences (ArrayList<OccurrenceSequence> OccurrenceSequences){
+        
+        ArrayList<EndpointSequence> output = new ArrayList<EndpointSequence>();
+        for (int i = 0 ; i < OccurrenceSequences.size(); i++ ){
+            OccurrenceSequence occurrenceSequence = OccurrenceSequences.get(i);
+            ArrayList<Endpoint> endpointList = new ArrayList<Endpoint>();
+            EndpointSequence endpointSequence = new EndpointSequence(i, endpointList);
+            
+            for (int j = 0; j < occurrenceSequence.Sequence.size(); j++){
+                SymbolOccurrence SO = occurrenceSequence.Sequence.get(j);
+                Endpoint startEndpoint = new Endpoint(SO.SymbolID, SO.StartingTime, true, j);
+                Endpoint finishingEndpoint = new Endpoint(SO.SymbolID, SO.FinishingTime, false, j);
+                endpointSequence.Sequence.add(startEndpoint);
+                endpointSequence.Sequence.add(finishingEndpoint);
+            }
+            
+            Collections.sort(endpointSequence.Sequence);
+            
+            System.out.print(i + ": ");
+            for (int j = 0; j < endpointSequence.Sequence.size(); j++){
+                System.out.println(endpointSequence.Sequence);
+                System.out.println(endpointSequence.Sequence.size());
+            }
+            
+            output.add(endpointSequence);
+            
+        }
+        return null;
     }
 }
