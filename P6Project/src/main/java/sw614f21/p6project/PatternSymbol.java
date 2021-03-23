@@ -9,4 +9,8 @@ public class PatternSymbol extends Symbol {
         Start = start;
     }
 
+    @Override
+    public String toString() {
+        return SymbolID.toString() + (Start ? "+" : "-");
+    }
 }
