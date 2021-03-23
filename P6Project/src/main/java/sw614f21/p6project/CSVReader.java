@@ -15,16 +15,6 @@ public class CSVReader {
         FileInputStream in = null;
         ArrayList<OccurrenceSequence> output = new ArrayList<OccurrenceSequence>();
 
-/*        try {
-            in = new FileInputStream("house_dataset.csv");
-
-
-        }
-        finally {
-            if (in != null){
-                in.close();
-            }
-        }*/
 
         BufferedReader csvReader = new BufferedReader(new FileReader("resources/house_dataset.csv"));
         String row = csvReader.readLine();
