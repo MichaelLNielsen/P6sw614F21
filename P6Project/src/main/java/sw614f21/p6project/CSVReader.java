@@ -25,6 +25,7 @@ public class CSVReader {
         int day = 0;
 
         while ((row = csvReader.readLine()) != null) {
+
             Date date = new Date((int)Math.floor(j/24)+1,j%24);
             if (day < date.Days) {
                 day = date.Days;
@@ -35,6 +36,9 @@ public class CSVReader {
             String[] data = row.split(",");
             ArrayList<Double> values = new ArrayList<Double>();
             for (int i = 1; i < data.length; i++) {
+                //if (i < 40){ continue;}
+
+
                 double value = 0.0;
 
                 if (!data[i].equals("")){
