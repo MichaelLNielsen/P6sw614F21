@@ -4,10 +4,17 @@ import java.util.ArrayList;
 
 public class Program {
     public static void main(String[] args) throws IOException{
-
+        
+        
+        ArrayList<Integer> k = new ArrayList<Integer>();
+        
+  
         TPMiner tpMiner = new TPMiner();
-        tpMiner.TPMine(450);
-
-
+        ArrayList<TemporalPattern> patterns = tpMiner.TPMine(1000);
+        
+        for (int i = 0; i < patterns.size(); i++){
+            System.out.println(patterns.get(i));
+        }
+        
     }
 }
