@@ -7,13 +7,14 @@ public class Program {
         
         
         ArrayList<Integer> k = new ArrayList<Integer>();
-        
-  
+
         TPMiner tpMiner = new TPMiner();
-        ArrayList<TemporalPattern> patterns = tpMiner.TPMine(250);
+
+        ArrayList<TemporalPattern> patterns = tpMiner.TPMine(300);
+
         System.out.println(patterns.size());
         for (int i = 0; i < patterns.size(); i++){
-            System.out.println(patterns.get(i).TPattern);
+            System.out.println("Pattern = " + patterns.get(i).TPattern);
         }
         
     }

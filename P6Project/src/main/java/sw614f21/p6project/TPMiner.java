@@ -19,7 +19,6 @@ public class TPMiner {
         // Find all frequent endpoints, and remove infrequent endpoints in DB.
         ArrayList<PatternSymbol> FE = GetFrequentStartingEndpoints (OriginalDatabase, minSupport);
 
-
         for (int i = 0; i < FE.size(); i++) {
             PatternSymbol symbol = FE.get(i);
             ArrayList<PatternSymbol> tempInput = new ArrayList<PatternSymbol>();
@@ -28,7 +27,11 @@ public class TPMiner {
             TemporalPattern temp = new TemporalPattern(tempInput);
             
             TPSpan(temp, projectedDB, minSupport);
+            
+            
         }
+        
+        
         return TP;
     }
 
@@ -133,32 +136,31 @@ public class TPMiner {
         return projectedDB;
     }
     
-    public void RecursivePostfixScan (EndpointSequence endpointSequence, ArrayList<EndpointSequence> projectedDB, PatternSymbol patternSymbol, int k){
+    public void RecursivePostfixScan (EndpointSequence endpointSequence, ArrayList<EndpointSequence> projectedDB, PatternSymbol patternSymbol, int k) {
         k = k + 1;
-        for (; k < endpointSequence.Sequence.size(); k++){
-            if(patternSymbol.SymbolID == endpointSequence.Sequence.get(k).SymbolID){
+        for (; k < endpointSequence.Sequence.size(); k++) {
+            if (patternSymbol.SymbolID == endpointSequence.Sequence.get(k).SymbolID) {
                 RecursivePostfixScan(endpointSequence, projectedDB, patternSymbol, k);
                 break;
             }
         }
 
         //Backtrack until the first endpoint with the same timestamp as the last symbol in the pattern sequence.
-        if (k != endpointSequence.Sequence.size()){
-            while ( k > 0 && endpointSequence.Sequence.get(k-1).Timestamp == endpointSequence.Sequence.get(k).Timestamp){
+        if (k != endpointSequence.Sequence.size()) {
+            while (k > 0 && endpointSequence.Sequence.get(k - 1).Timestamp == endpointSequence.Sequence.get(k).Timestamp) {
                 k--;
             }
         }
 
         // add the postfix sequences to a new sequence and add it to the output.
         EndpointSequence newEndpointSequence = new EndpointSequence(DBSequenceID++, new ArrayList<Endpoint>());
-        for (; k < endpointSequence.Sequence.size(); k++){
+        for (; k < endpointSequence.Sequence.size(); k++) {
             newEndpointSequence.Sequence.add(endpointSequence.Sequence.get(k));
         }
-        if (!newEndpointSequence.Sequence.isEmpty()){
+        if (!newEndpointSequence.Sequence.isEmpty()) {
             projectedDB.add(newEndpointSequence);
         }
     }
-
     public void TPSpan(TemporalPattern alpha, ArrayList<EndpointSequence> database, int minSupport){
         ArrayList<PatternSymbol> FE = new ArrayList<PatternSymbol>();
         FE = CountSupport(alpha, database, minSupport);
@@ -260,7 +262,7 @@ public class TPMiner {
         }
         return output;
     }
-    
+
     public boolean IsTemporalPattern(TemporalPattern alpha){
         // go through each symbol in alpha.
         ArrayList<PatternSymbol> tempAlpha = new ArrayList<>(alpha.TPattern);

@@ -41,9 +41,7 @@ public class CSVReader {
             for (int i = 1; i < data.length; i++) {
                 //if (i < 40){ continue;}
 
-
                 double value = -10.0;
-
                 if (!data[i].equals("")){
                     value = Double.parseDouble(data[i]);
                 }
