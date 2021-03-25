@@ -19,7 +19,6 @@ public class TPMiner {
         // Find all frequent endpoints, and remove infrequent endpoints in DB.
         ArrayList<PatternSymbol> FE = GetFrequentStartingEndpoints (OriginalDatabase, minSupport);
 
-
         for (int i = 0; i < FE.size(); i++) {
             PatternSymbol symbol = FE.get(i);
             ArrayList<PatternSymbol> tempInput = new ArrayList<PatternSymbol>();
@@ -28,7 +27,11 @@ public class TPMiner {
             TemporalPattern temp = new TemporalPattern(tempInput);
             
             TPSpan(temp, projectedDB, minSupport);
+            
+            
         }
+        
+        
         return TP;
     }
 
@@ -41,7 +44,7 @@ public class TPMiner {
         // counts the number of occurrences for each symbol type.
         for (int i = 0; i < endpointDB.size(); i++) {
 
-            ArrayList<Endpoint> sequence =  endpointDB.get(i).Sequence;
+            ArrayList<Endpoint> sequence = endpointDB.get(i).Sequence;
 
             for (int j = 0; j < sequence.size(); j++) {
                 Endpoint endpoint = sequence.get(j);
@@ -87,8 +90,6 @@ public class TPMiner {
                 resultList.add(symbol);
             }
         }
-        System.out.println(resultList);
-        System.out.println(resultList.size());
 
         return resultList;
     }
@@ -107,12 +108,10 @@ public class TPMiner {
             for (int j = 0; j < PatternSymbols.size(); j++) {
                 for (; k < endpointSequence.Sequence.size(); k++){
                     if(PatternSymbols.get(j).SymbolID == endpointSequence.Sequence.get(k).SymbolID){
-                        //System.out.println("k =" + k);
                         k++;
                         break;
                     }
                 }
-                //System.out.println("k (j) =" + k);
             }
             
             //Backtrack until the first endpoint with the same timestamp as the last symbol in the pattern sequence.
@@ -159,24 +158,21 @@ public class TPMiner {
             projectedDB.add(newEndpointSequence);
         }
     }*/
-
     public void TPSpan(TemporalPattern alpha, ArrayList<EndpointSequence> database, int minSupport){
         ArrayList<PatternSymbol> FE = new ArrayList<PatternSymbol>();
         FE = CountSupport(alpha, database, minSupport);
-        //System.out.println(FE.size());
-       // System.out.println(FE.get(0));
         FE = PointPruning(FE, alpha);
-       // System.out.println(FE.size());
         for (int i = 0; i< FE.size(); i++){
-            TemporalPattern alphaPrime = new TemporalPattern(alpha.TPattern);
+            TemporalPattern alphaPrime = new TemporalPattern(new ArrayList<PatternSymbol> (alpha.TPattern));
             alphaPrime.TPattern.add(FE.get(i));
             
             if (IsTemporalPattern(alphaPrime)){
-                TP.add(alphaPrime);
+                TemporalPattern newPattern = new TemporalPattern(new ArrayList<PatternSymbol>(alphaPrime.TPattern));
+                TP.add(newPattern);
             }
             
             ArrayList<EndpointSequence> projectedDatabase = DBConstruct(alphaPrime);
-            
+
             TPSpan(alphaPrime, projectedDatabase, minSupport);
         }
 
@@ -212,7 +208,6 @@ public class TPMiner {
         }
         // check for min support.
         ArrayList<PatternSymbol> keys = new ArrayList<PatternSymbol> (symbolCounter.keySet());
-        //System.out.println("");
         for (int i = 0; i < keys.size(); i++){
 
             if (symbolCounter.get(keys.get(i)) >= minSupport){
@@ -266,7 +261,7 @@ public class TPMiner {
         }
         return output;
     }
-    
+
     public boolean IsTemporalPattern(TemporalPattern alpha){
         // go through each symbol in alpha.
         ArrayList<PatternSymbol> tempAlpha = new ArrayList<>(alpha.TPattern);
@@ -277,12 +272,12 @@ public class TPMiner {
             if (symbol.Start){
                 boolean hasPartner = false;
                 //check the rest of the pattern to see if the starting symbol has a matching finishing symbol.
-                
+
                 for (int j = 1; j < tempAlpha.size(); j++){
                     if (symbol.SymbolID == tempAlpha.get(j).SymbolID && tempAlpha.get(j).Start){
                         return false;
                     }
-                    if (symbol.SymbolID == tempAlpha.get(j).SymbolID && !tempAlpha.get(j).Start){
+                    if (symbol.SymbolID == tempAlpha.get(j).SymbolID && symbol.Start != tempAlpha.get(j).Start){
                         hasPartner = true;
 
                         tempAlpha.remove(tempAlpha.get(j));
