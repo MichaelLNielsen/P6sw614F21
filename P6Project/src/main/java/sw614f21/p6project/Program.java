@@ -9,8 +9,10 @@ public class Program {
         ArrayList<Integer> k = new ArrayList<Integer>();
         
   
+        ArrayList<PatternSymbol> testliste = new ArrayList<PatternSymbol>();
+        
         TPMiner tpMiner = new TPMiner();
-        ArrayList<TemporalPattern> patterns = tpMiner.TPMine(5);
+        ArrayList<TemporalPattern> patterns = tpMiner.TPMine(0);
         System.out.println(patterns.size());
         for (int i = 0; i < patterns.size(); i++){
 
