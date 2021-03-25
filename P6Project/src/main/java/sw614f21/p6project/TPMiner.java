@@ -105,6 +105,9 @@ public class TPMiner {
             for (int j = 0; j < PatternSymbols.size(); j++) {
                 for (; k < endpointSequence.Sequence.size(); k++){
                     if (PatternSymbols.get(j).SymbolID == endpointSequence.Sequence.get(k).SymbolID){
+                        if (PatternSymbols.size() == 1){
+                            RecursivePostfixScan(endpointSequence, projectedDB, PatternSymbols.get(0), k);
+                        }
                         k++;
                         break;
                     }
@@ -130,7 +133,7 @@ public class TPMiner {
         return projectedDB;
     }
     
-    /*public void RecursivePostfixScan (EndpointSequence endpointSequence, ArrayList<EndpointSequence> projectedDB, PatternSymbol patternSymbol, int k){
+    public void RecursivePostfixScan (EndpointSequence endpointSequence, ArrayList<EndpointSequence> projectedDB, PatternSymbol patternSymbol, int k){
         k = k + 1;
         for (; k < endpointSequence.Sequence.size(); k++){
             if(patternSymbol.SymbolID == endpointSequence.Sequence.get(k).SymbolID){
@@ -154,7 +157,7 @@ public class TPMiner {
         if (!newEndpointSequence.Sequence.isEmpty()){
             projectedDB.add(newEndpointSequence);
         }
-    }*/
+    }
 
     public void TPSpan(TemporalPattern alpha, ArrayList<EndpointSequence> database, int minSupport){
         ArrayList<PatternSymbol> FE = new ArrayList<PatternSymbol>();
