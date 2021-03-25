@@ -1,8 +1,6 @@
 package sw614f21.p6project;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.time.chrono.ThaiBuddhistEra;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -113,13 +111,6 @@ public class TPMiner {
                     break;
                 }
             }
-
-            //Backtrack until the first endpoint with the same timestamp as the last symbol in the pattern sequence.
-//            if (k != endpointSequence.Sequence.size()){
-//                while (k > 0 && endpointSequence.Sequence.get(k - 1).Timestamp == endpointSequence.Sequence.get(k).Timestamp){
-//                    k--;
-//                }
-//            }
             
             // add the postfix sequences to a new sequence and add it to the output.
             EndpointSequence newEndpointSequence = new EndpointSequence(DBSequenceID++, new ArrayList<Endpoint>());
@@ -141,13 +132,6 @@ public class TPMiner {
                 break;
             }
         }
-
-        //Backtrack until the first endpoint with the same timestamp as the last symbol in the pattern sequence.
-//        if (k != endpointSequence.Sequence.size()) {
-//            while (k > 0 && endpointSequence.Sequence.get(k - 1).Timestamp == endpointSequence.Sequence.get(k).Timestamp) {
-//                k--;
-//            }
-//        }
 
         // add the postfix sequences to a new sequence and add it to the output.
         EndpointSequence newEndpointSequence = new EndpointSequence(DBSequenceID++, new ArrayList<Endpoint>());
@@ -174,7 +158,7 @@ public class TPMiner {
             
             ArrayList<EndpointSequence> projectedDatabase = DBConstruct(database, alphaPrime);
             TPSpan(alphaPrime, projectedDatabase, minSupport);
-            
+
 
         }
         database.clear();
@@ -192,12 +176,7 @@ public class TPMiner {
             
             for (int j = 0; j < sequence.Sequence.size(); j++){
                 PatternSymbol PS = new PatternSymbol(sequence.Sequence.get(j).SymbolID, sequence.Sequence.get(j).Start);
-//                PatternSymbol symbolFromHashMap = AlreadyInHashMap(symbolCounter, PS);
-//
-//                if (symbolFromHashMap != null){
-//                    PS = symbolFromHashMap;
-//                }
-                
+
                 int count = symbolCounter.getOrDefault(PS, 0);
                 symbolCounter.put(PS, count + 1);
                 
@@ -229,24 +208,7 @@ public class TPMiner {
         }
         return false;
     }
-    
-    private PatternSymbol AlreadyInHashMap (HashMap<PatternSymbol, Integer> hashMap, PatternSymbol symbol) {
-        ArrayList<PatternSymbol> keys = new ArrayList<PatternSymbol> (hashMap.keySet());
-        
-        for (int i = 0; i < keys.size(); i++){
-            if (ComparePatternSymbols(keys.get(i), symbol)){
-                //if we find another element in the hashmap which has the same symbol id and start/finishing tag then return it.
-                return keys.get(i);
-            }
-        }
-        //if not found in the hashmap return null
-        return null;
-    }
-    
-    private boolean ComparePatternSymbols (PatternSymbol symbol1, PatternSymbol symbol2){
-        return (symbol1.Start == symbol2.Start && symbol1.SymbolID == symbol2.SymbolID);
-    }
-    
+
     public ArrayList<PatternSymbol> PointPruning (ArrayList<PatternSymbol> FE, TemporalPattern alpha){
         ArrayList<PatternSymbol> output = new ArrayList<PatternSymbol>();
         
