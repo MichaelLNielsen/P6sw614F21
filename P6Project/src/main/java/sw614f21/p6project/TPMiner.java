@@ -2,6 +2,7 @@ package sw614f21.p6project;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.time.chrono.ThaiBuddhistEra;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -23,12 +24,10 @@ public class TPMiner {
             PatternSymbol symbol = FE.get(i);
             ArrayList<PatternSymbol> tempInput = new ArrayList<PatternSymbol>();
             tempInput.add(symbol);
-            ArrayList<EndpointSequence> projectedDB = GetProjectedDB(tempInput);
+            ArrayList<EndpointSequence> projectedDB = GetProjectedDB(OriginalDatabase, symbol, true);
             TemporalPattern temp = new TemporalPattern(tempInput);
             
             TPSpan(temp, projectedDB, minSupport);
-            
-            
         }
         
         
@@ -95,34 +94,32 @@ public class TPMiner {
     }
     //local variable for giving projected database sequences unique IDs.
     public int DBSequenceID = 0;
-    private ArrayList<EndpointSequence> GetProjectedDB(ArrayList<PatternSymbol> PatternSymbols) {
+    private ArrayList<EndpointSequence> GetProjectedDB(ArrayList<EndpointSequence> inputDB, PatternSymbol patternSymbol, boolean first) {
 
         ArrayList<EndpointSequence> projectedDB = new ArrayList<EndpointSequence>();
 
         // iterate through each sequence, to project them.
-        for (int i = 0; i < OriginalDatabase.size(); i++) {
-            EndpointSequence endpointSequence = OriginalDatabase.get(i);
+        for (int i = 0; i < inputDB.size(); i++) {
+            EndpointSequence endpointSequence = inputDB.get(i);
             
             //skip ahead to the last symbol in the pattern.
             int k = 0;
-            for (int j = 0; j < PatternSymbols.size(); j++) {
-                for (; k < endpointSequence.Sequence.size(); k++){
-                    if (PatternSymbols.get(j).SymbolID == endpointSequence.Sequence.get(k).SymbolID){
-                        if (PatternSymbols.size() == 1){
-                            RecursivePostfixScan(endpointSequence, projectedDB, PatternSymbols.get(0), k);
-                        }
-                        k++;
-                        break;
+            for (; k < endpointSequence.Sequence.size(); k++) {
+                if (patternSymbol.SymbolID == endpointSequence.Sequence.get(k).SymbolID){
+                    if (first){
+                        RecursivePostfixScan(endpointSequence, projectedDB, patternSymbol, k);
                     }
+                    k++;
+                    break;
                 }
             }
-            
+
             //Backtrack until the first endpoint with the same timestamp as the last symbol in the pattern sequence.
-            if (k != endpointSequence.Sequence.size()){
-                while (k > 0 && endpointSequence.Sequence.get(k - 1).Timestamp == endpointSequence.Sequence.get(k).Timestamp){
-                    k--;
-                }
-            }
+//            if (k != endpointSequence.Sequence.size()){
+//                while (k > 0 && endpointSequence.Sequence.get(k - 1).Timestamp == endpointSequence.Sequence.get(k).Timestamp){
+//                    k--;
+//                }
+//            }
             
             // add the postfix sequences to a new sequence and add it to the output.
             EndpointSequence newEndpointSequence = new EndpointSequence(DBSequenceID++, new ArrayList<Endpoint>());
@@ -146,11 +143,11 @@ public class TPMiner {
         }
 
         //Backtrack until the first endpoint with the same timestamp as the last symbol in the pattern sequence.
-        if (k != endpointSequence.Sequence.size()) {
-            while (k > 0 && endpointSequence.Sequence.get(k - 1).Timestamp == endpointSequence.Sequence.get(k).Timestamp) {
-                k--;
-            }
-        }
+//        if (k != endpointSequence.Sequence.size()) {
+//            while (k > 0 && endpointSequence.Sequence.get(k - 1).Timestamp == endpointSequence.Sequence.get(k).Timestamp) {
+//                k--;
+//            }
+//        }
 
         // add the postfix sequences to a new sequence and add it to the output.
         EndpointSequence newEndpointSequence = new EndpointSequence(DBSequenceID++, new ArrayList<Endpoint>());
@@ -161,6 +158,8 @@ public class TPMiner {
             projectedDB.add(newEndpointSequence);
         }
     }
+
+
     public void TPSpan(TemporalPattern alpha, ArrayList<EndpointSequence> database, int minSupport){
         ArrayList<PatternSymbol> FE = new ArrayList<PatternSymbol>();
         FE = CountSupport(alpha, database, minSupport);
@@ -173,10 +172,17 @@ public class TPMiner {
                 TP.add(alphaPrime);
             }
             
-            ArrayList<EndpointSequence> projectedDatabase = DBConstruct(alphaPrime);
+            ArrayList<EndpointSequence> projectedDatabase = DBConstruct(database, alphaPrime);
             TPSpan(alphaPrime, projectedDatabase, minSupport);
-        }
 
+            for (int j = 0; j < projectedDatabase.size(); j++){
+                for (int k = 0; k < projectedDatabase.get(j).Sequence.size(); k++){
+                    projectedDatabase.get(j).Sequence.get(k).Visited = false;
+                }
+            }
+
+        }
+        database.clear();
     }
     
     
@@ -297,9 +303,9 @@ public class TPMiner {
         return true;
     }
     
-    public ArrayList<EndpointSequence> DBConstruct (TemporalPattern alpha){
+    public ArrayList<EndpointSequence> DBConstruct (ArrayList<EndpointSequence> inputDB, TemporalPattern alpha){
         ArrayList<EndpointSequence> projectedDatabase = new ArrayList<EndpointSequence>();
-        projectedDatabase = GetProjectedDB(alpha.TPattern);
+        projectedDatabase = GetProjectedDB(inputDB, alpha.TPattern.get(alpha.TPattern.size() - 1), false);
         
         // remove finishing endpoint.
         for (int i = 0; i < projectedDatabase.size(); i++){

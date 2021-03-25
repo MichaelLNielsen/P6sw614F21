@@ -8,6 +8,7 @@ public class Endpoint extends Symbol implements Comparable<Endpoint>{
     public Integer Timestamp;
     public Integer OccurrenceID;
     public boolean Start;
+    public boolean Visited = false;
     
     
     public Endpoint (EventType symbol, int timestamp, boolean start, int occurrenceID){
