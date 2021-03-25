@@ -174,12 +174,7 @@ public class TPMiner {
             
             ArrayList<EndpointSequence> projectedDatabase = DBConstruct(database, alphaPrime);
             TPSpan(alphaPrime, projectedDatabase, minSupport);
-
-            for (int j = 0; j < projectedDatabase.size(); j++){
-                for (int k = 0; k < projectedDatabase.get(j).Sequence.size(); k++){
-                    projectedDatabase.get(j).Sequence.get(k).Visited = false;
-                }
-            }
+            
 
         }
         database.clear();
