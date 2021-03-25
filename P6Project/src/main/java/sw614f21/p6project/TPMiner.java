@@ -173,11 +173,10 @@ public class TPMiner {
             
             if (IsTemporalPattern(alphaPrime)){
                 TP.add(alphaPrime);
-                break;
             }
             
             ArrayList<EndpointSequence> projectedDatabase = DBConstruct(alphaPrime);
-            System.out.println(projectedDatabase.size());
+            
             TPSpan(alphaPrime, projectedDatabase, minSupport);
         }
 
@@ -218,8 +217,6 @@ public class TPMiner {
 
             if (symbolCounter.get(keys.get(i)) >= minSupport){
                 output.add(keys.get(i));
-                //System.out.println(keys.get(i) + "");
-                System.out.println(keys.get(i)+ " " + symbolCounter.get(keys.get(i)));
             }
         }
 
@@ -280,12 +277,17 @@ public class TPMiner {
             if (symbol.Start){
                 boolean hasPartner = false;
                 //check the rest of the pattern to see if the starting symbol has a matching finishing symbol.
-                for (int j = 0; j < tempAlpha.size(); j++){
+                
+                for (int j = 1; j < tempAlpha.size(); j++){
+                    if (symbol.SymbolID == tempAlpha.get(j).SymbolID && tempAlpha.get(j).Start){
+                        return false;
+                    }
                     if (symbol.SymbolID == tempAlpha.get(j).SymbolID && !tempAlpha.get(j).Start){
                         hasPartner = true;
 
                         tempAlpha.remove(tempAlpha.get(j));
                         tempAlpha.remove(tempAlpha.get(0));
+                        break;
                     }
                 }
                 if (hasPartner == false){
