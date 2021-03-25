@@ -36,9 +36,6 @@ public class CSVReader {
             String[] data = row.split(",");
             ArrayList<Double> values = new ArrayList<Double>();
             for (int i = 1; i < data.length; i++) {
-                //if (i < 40){ continue;}
-
-
                 double value = 0.0;
 
                 if (!data[i].equals("")){
