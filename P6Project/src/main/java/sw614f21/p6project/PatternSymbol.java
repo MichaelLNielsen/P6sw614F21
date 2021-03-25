@@ -11,6 +11,6 @@ public class PatternSymbol extends Symbol {
 
     @Override
     public String toString() {
-        return SymbolID.toString() + (Start ? "+" : "-");
+        return SymbolID.toString().concat((Start ? "+" : "-"));
     }
 }
