@@ -17,6 +17,9 @@ public class CSVReader {
 
 
         BufferedReader csvReader = new BufferedReader(new FileReader("resources/house_dataset.csv"));
+//        csvReader.mark();
+//        long count = csvReader.lines().count();
+//        csvReader.reset();
         String row = csvReader.readLine();
         HashMap<EventType, Date> startEndpoints = new HashMap<EventType, Date>();
         HashMap<EventType, Boolean> ongoingEvents = new HashMap<EventType, Boolean>();
@@ -26,7 +29,7 @@ public class CSVReader {
 
         while ((row = csvReader.readLine()) != null) {
 
-            Date date = new Date((int)Math.floor(j/24)+1,j%24);
+            Date date = new Date((int)Math.floor(j / 24) + 1,j % 24);
             if (day < date.Days) {
                 day = date.Days;
                 OccurrenceSequence daySequence = new OccurrenceSequence(day, new ArrayList<SymbolOccurrence>());
@@ -39,7 +42,7 @@ public class CSVReader {
                 //if (i < 40){ continue;}
 
 
-                double value = 0.0;
+                double value = -10.0;
 
                 if (!data[i].equals("")){
                     value = Double.parseDouble(data[i]);
@@ -52,14 +55,13 @@ public class CSVReader {
                     ongoingEvents.put(symbol, true);
                     startEndpoints.put(symbol, date);
                     SymbolOccurrence occurrence = new SymbolOccurrence(symbol, date.Hours);
-                    output.get(date.Days-1).Sequence.add(occurrence);
+                    output.get(date.Days - 1).Sequence.add(occurrence);
                     startingSymbols.put(symbol, occurrence);
                 }
-
                 else if (!overThreshold && ongoingEvents.getOrDefault(symbol, false)) {
                     Date startDate = startEndpoints.get(symbol);
-                    int startRow = 24*(startDate.Days - 1) + startDate.Hours;
-                    int finishingTime = j-startRow+startDate.Hours;
+                    int startRow = 24 * (startDate.Days - 1) + startDate.Hours;
+                    int finishingTime = j - startRow + startDate.Hours;
                     startingSymbols.get(symbol).FinishingTime = finishingTime;
                     startingSymbols.remove(symbol);
                     ongoingEvents.remove(symbol);

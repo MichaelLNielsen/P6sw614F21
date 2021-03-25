@@ -41,7 +41,7 @@ public class TPMiner {
         // counts the number of occurrences for each symbol type.
         for (int i = 0; i < endpointDB.size(); i++) {
 
-            ArrayList<Endpoint> sequence =  endpointDB.get(i).Sequence;
+            ArrayList<Endpoint> sequence = endpointDB.get(i).Sequence;
 
             for (int j = 0; j < sequence.size(); j++) {
                 Endpoint endpoint = sequence.get(j);
@@ -87,8 +87,6 @@ public class TPMiner {
                 resultList.add(symbol);
             }
         }
-        System.out.println(resultList);
-        System.out.println(resultList.size());
 
         return resultList;
     }
@@ -107,12 +105,10 @@ public class TPMiner {
             for (int j = 0; j < PatternSymbols.size(); j++) {
                 for (; k < endpointSequence.Sequence.size(); k++){
                     if(PatternSymbols.get(j).SymbolID == endpointSequence.Sequence.get(k).SymbolID){
-                        //System.out.println("k =" + k);
                         k++;
                         break;
                     }
                 }
-                //System.out.println("k (j) =" + k);
             }
             
             //Backtrack until the first endpoint with the same timestamp as the last symbol in the pattern sequence.
@@ -163,10 +159,7 @@ public class TPMiner {
     public void TPSpan(TemporalPattern alpha, ArrayList<EndpointSequence> database, int minSupport){
         ArrayList<PatternSymbol> FE = new ArrayList<PatternSymbol>();
         FE = CountSupport(alpha, database, minSupport);
-        //System.out.println(FE.size());
-       // System.out.println(FE.get(0));
         FE = PointPruning(FE, alpha);
-       // System.out.println(FE.size());
         for (int i = 0; i< FE.size(); i++){
             TemporalPattern alphaPrime = new TemporalPattern(alpha.TPattern);
             alphaPrime.TPattern.add(FE.get(i));
@@ -177,7 +170,6 @@ public class TPMiner {
             }
             
             ArrayList<EndpointSequence> projectedDatabase = DBConstruct(alphaPrime);
-            System.out.println(projectedDatabase.size());
             TPSpan(alphaPrime, projectedDatabase, minSupport);
         }
 
@@ -213,13 +205,10 @@ public class TPMiner {
         }
         // check for min support.
         ArrayList<PatternSymbol> keys = new ArrayList<PatternSymbol> (symbolCounter.keySet());
-        //System.out.println("");
         for (int i = 0; i < keys.size(); i++){
 
             if (symbolCounter.get(keys.get(i)) >= minSupport){
                 output.add(keys.get(i));
-                //System.out.println(keys.get(i) + "");
-                System.out.println(keys.get(i)+ " " + symbolCounter.get(keys.get(i)));
             }
         }
 
@@ -280,12 +269,16 @@ public class TPMiner {
             if (symbol.Start){
                 boolean hasPartner = false;
                 //check the rest of the pattern to see if the starting symbol has a matching finishing symbol.
-                for (int j = 0; j < tempAlpha.size(); j++){
+                for (int j = 1; j < tempAlpha.size(); j++){
+                    if (symbol.SymbolID == tempAlpha.get(j).SymbolID && tempAlpha.get(j).Start){
+                        return false;
+                    }
                     if (symbol.SymbolID == tempAlpha.get(j).SymbolID && !tempAlpha.get(j).Start){
                         hasPartner = true;
 
                         tempAlpha.remove(tempAlpha.get(j));
                         tempAlpha.remove(tempAlpha.get(0));
+                        break;
                     }
                 }
                 if (hasPartner == false){

@@ -10,10 +10,9 @@ public class Program {
         
   
         TPMiner tpMiner = new TPMiner();
-        ArrayList<TemporalPattern> patterns = tpMiner.TPMine(5);
+        ArrayList<TemporalPattern> patterns = tpMiner.TPMine(350);
         System.out.println(patterns.size());
         for (int i = 0; i < patterns.size(); i++){
-
             System.out.println(patterns.get(i).TPattern);
         }
         
