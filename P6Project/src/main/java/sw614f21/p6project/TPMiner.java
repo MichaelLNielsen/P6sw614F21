@@ -12,9 +12,15 @@ public class TPMiner {
 
     public ArrayList<TemporalPattern> TPMine (int minSupport) throws IOException {
 
-        ArrayList<OccurrenceSequence> occurrenceDB = CSVReader.GetOccurrenceSequences();
-        OriginalDatabase = CSVReader.GetEndpointSequences(occurrenceDB);
+        //ArrayList<OccurrenceSequence> occurrenceDB = CSVReader.GetOccurrenceSequences();
+        //OriginalDatabase = CSVReader.GetEndpointSequences(occurrenceDB);
 
+        //Fake dataset:
+        
+        FakeDataSet FS = new FakeDataSet();
+        OriginalDatabase = FS.GetFakeData();
+        
+        
         // Find all frequent endpoints, and remove infrequent endpoints in DB.
         ArrayList<PatternSymbol> FE = GetFrequentStartingEndpoints (OriginalDatabase, minSupport);
 
@@ -129,6 +135,7 @@ public class TPMiner {
         for (; k < endpointSequence.Sequence.size(); k++) {
             if (patternSymbol.SymbolID == endpointSequence.Sequence.get(k).SymbolID) {
                 RecursivePostfixScan(endpointSequence, projectedDB, patternSymbol, k);
+                k++;
                 break;
             }
         }
