@@ -1,6 +1,7 @@
 package sw614f21.p6project;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class FakeDataSet {
     ArrayList<Endpoint> sequence1 = new ArrayList<Endpoint>();
@@ -93,6 +94,12 @@ public class FakeDataSet {
         
         sequence4.add(s4EStart);
         sequence4.add(s4EFinish);
+        
+        
+        Collections.sort(sequence1);
+        Collections.sort(sequence2);
+        Collections.sort(sequence3);
+        Collections.sort(sequence4);
         
         EndpointSequence S1 = new EndpointSequence(1, sequence1);
         EndpointSequence S2 = new EndpointSequence(2, sequence2);
