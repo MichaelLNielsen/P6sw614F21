@@ -5,9 +5,6 @@ import java.util.ArrayList;
 public class Program {
     public static void main(String[] args) throws IOException{
         
-        
-        ArrayList<Integer> k = new ArrayList<Integer>();
-
         TPMiner tpMiner = new TPMiner();
 
         ArrayList<TemporalPattern> patterns = tpMiner.TPMine(2);
