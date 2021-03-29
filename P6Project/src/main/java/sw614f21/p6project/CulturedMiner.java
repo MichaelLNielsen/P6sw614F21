@@ -1,5 +1,7 @@
 package sw614f21.p6project;
 
+import java.lang.reflect.Array;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Collections;
@@ -18,15 +20,16 @@ public class CulturedMiner {
         
         for (int i = 0; i < FE.size(); i++){
             ClusterSymbol symbol = new ClusterSymbol(FE.get(i).SymbolID, FE.get(i).Start, FE.get(i).Mean, FE.get(i).Deviation);
-            ArrayList<ClusterSymbol> tempInput = new ArrayList<ClusterSymbol>();
-            tempInput.add(symbol);
             ArrayList<EndpointSequence> projectedDB = GetProjectedDB(OriginalDatabase, symbol, true);
-            //TemporalPattern temp = new TemporalPattern(tempInput);
+
+
+            ClusterPattern temp = new ClusterPattern();
+            temp.Pattern.add(symbol);
             
-            //TPSpan(temp, projectedDB, minSupport);
-            
-            
+            TPSpan(temp, projectedDB, minSupport, maxClusterDeviation);
+
         }
+
         return TP;
     }
     
@@ -116,7 +119,7 @@ public class CulturedMiner {
             //skip ahead to the last symbol in the pattern.
             int k = 0;
             for (; k < endpointSequence.Sequence.size(); k++) {
-                if (patternSymbol.SymbolID == endpointSequence.Sequence.get(k).SymbolID){
+                if (patternSymbol.SymbolID == endpointSequence.Sequence.get(k).SymbolID && patternSymbol.Start == endpointSequence.Sequence.get(k).Start){
                     if (first){
                         RecursivePostfixScan(endpointSequence, projectedDB, patternSymbol, k);
                     }
@@ -141,7 +144,7 @@ public class CulturedMiner {
     public void RecursivePostfixScan (EndpointSequence endpointSequence, ArrayList<EndpointSequence> projectedDB, PatternSymbol patternSymbol, int k) {
         k = k + 1;
         for (; k < endpointSequence.Sequence.size(); k++) {
-            if (patternSymbol.SymbolID == endpointSequence.Sequence.get(k).SymbolID) {
+            if (patternSymbol.SymbolID == endpointSequence.Sequence.get(k).SymbolID && patternSymbol.Start == endpointSequence.Sequence.get(k).Start) {
                 RecursivePostfixScan(endpointSequence, projectedDB, patternSymbol, k);
                 k++;
                 break;
@@ -167,6 +170,94 @@ public class CulturedMiner {
             projectedDB.add(newEndpointSequence);
         }
     }
-    
+
+    public void TPSpan(ClusterPattern alpha, ArrayList<EndpointSequence> database, int minSupport, double maxClusterDeviation){
+        ArrayList<ClusterSymbol> FE = new ArrayList<ClusterSymbol>();
+        FE = CountSupport(alpha, database, minSupport);
+        FE = PointPruning(FE, alpha);
+        /*for (int i = 0; i< FE.size(); i++){
+            TemporalPattern alphaPrime = new TemporalPattern(new ArrayList<PatternSymbol>(alpha.Pattern));
+            alphaPrime.Pattern.add(FE.get(i));
+
+            if (IsTemporalPattern(alphaPrime)){
+                TemporalPattern newPattern = new TemporalPattern(new ArrayList<PatternSymbol>(alphaPrime.Pattern));
+                TP.add(alphaPrime);
+            }
+
+            ArrayList<EndpointSequence> projectedDatabase = DBConstruct(database, alphaPrime);
+            TPSpan(alphaPrime, projectedDatabase, minSupport);
+        }*/
+        database.clear();
+    }
+
+    public ArrayList<ClusterSymbol> CountSupport(ClusterPattern alpha, ArrayList<EndpointSequence> database, int minSupport) {
+
+        ArrayList<ClusterSymbol> symbolCounter = new ArrayList<ClusterSymbol>();
+
+        for (int i = 0; i < database.size(); i++){
+            EndpointSequence sequence = database.get(i);
+
+            for (int j = 0; j < sequence.Sequence.size(); j++){
+                ClusterSymbol CS = new ClusterSymbol(sequence.Sequence.get(j).SymbolID, sequence.Sequence.get(j).Start);
+
+                int position = symbolCounter.indexOf(CS);
+                System.out.println(CS.toString());
+                System.out.println("sequence: " + sequence.ID);
+                System.out.println("Size before:" + symbolCounter.size());
+                if (position == -1){
+                    CS.ClusterElements = new ArrayList<ClusterElement>();
+                    position = symbolCounter.size();
+                    symbolCounter.add(CS);
+                }
+                System.out.println("Size after:" + symbolCounter.size());
+                System.out.println("");
+
+                ClusterElement element = new ClusterElement(sequence.Sequence.get(j).Timestamp, sequence.ID);
+                symbolCounter.get(position).ClusterElements.add(element);
+
+                if (CS.Start == false){
+                    if (IsInAlpha (alpha, CS)){
+                        break;
+                    }
+                }
+            }
+        }
+        // check for min support.
+
+        ArrayList<ClusterSymbol> symbolsToRemove = new ArrayList<ClusterSymbol>();
+        for (int i = 0; i < symbolCounter.size(); i++){
+            if (symbolCounter.get(i).ClusterElements.size() < minSupport){
+                symbolsToRemove.add(symbolCounter.get(i));
+            }
+        }
+        symbolCounter.removeAll(symbolsToRemove);
+        return symbolCounter;
+    }
+
+    private boolean IsInAlpha(ClusterPattern alpha, ClusterSymbol CS){
+        for (int i = 0; i < alpha.Pattern.size(); i++){
+            ClusterSymbol alphaSymbol = alpha.Pattern.get(i);
+            if (alphaSymbol.SymbolID == CS.SymbolID && alphaSymbol.Start && CS.Start == false ){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public ArrayList<ClusterSymbol> PointPruning (ArrayList<ClusterSymbol> FE, ClusterPattern alpha){
+        ArrayList<ClusterSymbol> output = new ArrayList<ClusterSymbol>();
+        for (int i = 0; i < FE.size(); i++ ){
+            ClusterSymbol CS = FE.get(i);
+            if (!CS.Start){
+                if (IsInAlpha(alpha, CS)){
+                    output.add(CS);
+                }
+            }
+            else {
+                output.add(CS);
+            }
+        }
+        return output;
+    }
     
 }

@@ -5,14 +5,14 @@ import java.util.ArrayList;
 public class Program {
     public static void main(String[] args) throws IOException{
         
-        TPMiner tpMiner = new TPMiner();
+        //TPMiner tpMiner = new TPMiner();
+        CulturedMiner cultMiner = new CulturedMiner();
 
-        ArrayList<TemporalPattern> patterns = tpMiner.TPMine(2);
+        cultMiner.CultureMine(1,3);
+        //ArrayList<TemporalPattern> patterns = tpMiner.TPMine(2);
 
-        System.out.println(patterns.size());
-        for (int i = 0; i < patterns.size(); i++){
-            System.out.println("Pattern = " + patterns.get(i).TPattern);
-        }
-        
+        //for (int i = 0; i < patterns.size(); i++){
+       //    System.out.println("Pattern = " + patterns.get(i).TPattern);
+        //}
     }
 }

@@ -109,7 +109,7 @@ public class TPMiner {
             //skip ahead to the last symbol in the pattern.
             int k = 0;
             for (; k < endpointSequence.Sequence.size(); k++) {
-                if (patternSymbol.SymbolID == endpointSequence.Sequence.get(k).SymbolID){
+                if (patternSymbol.SymbolID == endpointSequence.Sequence.get(k).SymbolID && patternSymbol.Start == endpointSequence.Sequence.get(k).Start){
                     if (first){
                         RecursivePostfixScan(endpointSequence, projectedDB, patternSymbol, k);
                     }
@@ -133,7 +133,7 @@ public class TPMiner {
     public void RecursivePostfixScan (EndpointSequence endpointSequence, ArrayList<EndpointSequence> projectedDB, PatternSymbol patternSymbol, int k) {
         k = k + 1;
         for (; k < endpointSequence.Sequence.size(); k++) {
-            if (patternSymbol.SymbolID == endpointSequence.Sequence.get(k).SymbolID) {
+            if (patternSymbol.SymbolID == endpointSequence.Sequence.get(k).SymbolID && patternSymbol.Start == endpointSequence.Sequence.get(k).Start) {
                 RecursivePostfixScan(endpointSequence, projectedDB, patternSymbol, k);
                 k++;
                 break;
@@ -160,6 +160,7 @@ public class TPMiner {
             alphaPrime.TPattern.add(FE.get(i));
             
             if (IsTemporalPattern(alphaPrime)){
+                TemporalPattern newPattern = new TemporalPattern(new ArrayList<PatternSymbol>(alphaPrime.TPattern));
                 TP.add(alphaPrime);
             }
             
@@ -264,6 +265,7 @@ public class TPMiner {
                 return false;
             }
         }
+        //System.out.println("alpha = " + alpha.TPattern);
         return true;
     }
     
