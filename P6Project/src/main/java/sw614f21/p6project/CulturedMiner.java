@@ -369,7 +369,7 @@ public class CulturedMiner  {
             ArrayList<ClusterSymbol> clusters = CreateClusters(fe.get(i), maxClusterDeviation);
 
             for (int j = 0; j < clusters.size(); j++){
-                ClusterSymbol cluster = fe.get(i);
+                ClusterSymbol cluster = clusters.get(j);
                 if (cluster.ClusterElements.size() >= minSupport) {
                     output.add(cluster);
                 }
