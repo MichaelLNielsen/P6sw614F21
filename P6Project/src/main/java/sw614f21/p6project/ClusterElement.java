@@ -1,6 +1,6 @@
 package sw614f21.p6project;
 
-public class ClusterElement {
+public class ClusterElement implements Comparable<ClusterElement> {
     public int TimeStamp;
     public EndpointSequence Sequence;
 
@@ -9,5 +9,9 @@ public class ClusterElement {
         this.Sequence = sequence;
     }
 
+    @Override
+    public int compareTo(ClusterElement o) {
+        return TimeStamp - o.TimeStamp;
+    }
 
 }

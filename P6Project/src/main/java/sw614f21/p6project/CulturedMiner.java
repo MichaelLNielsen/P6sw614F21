@@ -5,14 +5,16 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Collections;
+import java.io.IOException;
 
-
-public class CulturedMiner {
+public class CulturedMiner  {
     public ArrayList<ClusterPattern> TP = new ArrayList<ClusterPattern>();
 
-    public ArrayList<ClusterPattern> CultureMine(int minSupport, double maxClusterDeviation){
-        FakeDataSet FDS = new FakeDataSet();
-        ArrayList<EndpointSequence> OriginalDatabase = FDS.GetFakeData();
+    public ArrayList<ClusterPattern> CultureMine(int minSupport, double maxClusterDeviation) throws IOException{
+//        FakeDataSet FDS = new FakeDataSet();
+//        ArrayList<EndpointSequence> OriginalDatabase = FDS.GetFakeData();
+        ArrayList<OccurrenceSequence> occurrenceDB = CSVReader.GetOccurrenceSequences();
+        ArrayList<EndpointSequence> OriginalDatabase = CSVReader.GetEndpointSequences(occurrenceDB);
         
         
         //getting the frequent endpoints.
@@ -175,7 +177,7 @@ public class CulturedMiner {
         ArrayList<ClusterSymbol> FE = new ArrayList<ClusterSymbol>();
         FE = CountSupport(alpha, database, minSupport);
         FE = PointPruning(FE, alpha);
-        // Obtained clusters here.
+        FE = MagicClusterFunction(FE, minSupport, maxClusterDeviation);
 
         for (int i = 0; i< FE.size(); i++){
             ClusterPattern alphaPrime = new ClusterPattern();
@@ -193,6 +195,8 @@ public class CulturedMiner {
         }
         database.clear();
     }
+
+
 
     public ArrayList<ClusterSymbol> CountSupport(ClusterPattern alpha, ArrayList<EndpointSequence> database, int minSupport) {
 
@@ -356,6 +360,121 @@ public class CulturedMiner {
         return projectedDB;
     }
 
+    private ArrayList<ClusterSymbol> MagicClusterFunction(ArrayList<ClusterSymbol> fe, int minSupport, double maxClusterDeviation) {
 
+        ArrayList<ClusterSymbol> output = new ArrayList<ClusterSymbol>();
+
+        for (int i = 0; i < fe.size(); i++){
+
+            ArrayList<ClusterSymbol> clusters = CreateClusters(fe.get(i), maxClusterDeviation);
+
+            for (int j = 0; j < clusters.size(); j++){
+                ClusterSymbol cluster = fe.get(i);
+                if (cluster.ClusterElements.size() >= minSupport) {
+                    output.add(cluster);
+                }
+            }
+
+        }
+
+        return output;
+    }
+
+    private ArrayList<ClusterSymbol> CreateClusters (ClusterSymbol symbol, double maxClusterDeviation) {
+        ArrayList<ClusterSymbol> output = null;
+        Collections.sort(symbol.ClusterElements);
+        ArrayList<ClusterElement> elements = symbol.ClusterElements;
+        int n = elements.size();
+
+        double[][] D = new double[n + 1][n + 1];
+        int[][] B = new int[n + 1][n + 1];
+
+        for (int i = 0; i <= n; i++) {
+            for (int j = 0; j <= n; j++){
+                D[i][j] = Integer.MAX_VALUE;
+                B[i][j] = Integer.MAX_VALUE;
+            }
+        }
+        D[0][0] = 0;
+
+        for (int m = 1; m <= n; m++) {
+            for (int i = 1; i <= n; i++) {
+                SumOfSquares ss = new SumOfSquares();
+                for (int j = i; j >= m; j--) {
+                    double comp = D[j - 1][m - 1] + ss.Increment(elements.get(j - 1).TimeStamp);
+                    if (comp < D[i][m]){
+                        D[i][m] = comp;
+                        B[i][m] = j;
+                    }
+                }
+            }
+
+            output = GetClustering(m, B, symbol);
+
+            if (ClustersWithinThreshold(output, maxClusterDeviation)){
+                break;
+            }
+        }
+
+
+        return output;
+
+    }
+
+
+
+    private ArrayList<ClusterSymbol> GetClustering(int m, int[][] B, ClusterSymbol symbol){
+
+        ArrayList<Integer> leftmostElements = new ArrayList<Integer>();
+        ArrayList<ClusterSymbol> output = new ArrayList<ClusterSymbol>();
+        ArrayList<ClusterElement> elements = symbol.ClusterElements;
+
+        int n = elements.size();
+
+        for (int k = m; k >= 1; k--) {
+            leftmostElements.add(0, B[n][k] - 1);
+            n = B[n][k] - 1;
+        }
+        leftmostElements.add(n);
+
+        for (int i = 0; i < leftmostElements.size() - 1; i++) {
+            ClusterSymbol newCluster = new ClusterSymbol(symbol.SymbolID, symbol.Start);
+            newCluster.ClusterElements = new ArrayList<ClusterElement>();
+
+            for (int j = leftmostElements.get(i); j < leftmostElements.get(i + 1); j++){
+                newCluster.ClusterElements.add(elements.get(j));
+            }
+
+            output.add(newCluster);
+        }
+
+        return output;
+    }
+
+    private boolean ClustersWithinThreshold(ArrayList<ClusterSymbol> output, double maxClusterDeviation) {
+
+        for (int i = 0; i < output.size(); i++) {
+            output.get(i).Mean = GetClusterMean(output.get(i).ClusterElements);
+            output.get(i).Deviation = GetClusterDeviation(output.get(i).ClusterElements);
+            if (output.get(i).Deviation > maxClusterDeviation){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private double GetClusterMean (ArrayList<ClusterElement> elements) {
+        double sum = 0;
+        for (int i = 0; i < elements.size(); i++){
+            sum += (double)elements.get(i).TimeStamp;
+        }
+
+        return sum / (double)elements.size();
+    }
+
+    private double GetClusterDeviation(ArrayList<ClusterElement> elements) {
+        return elements.get(elements.size() - 1).TimeStamp - elements.get(0).TimeStamp;
+    }
 
 }
