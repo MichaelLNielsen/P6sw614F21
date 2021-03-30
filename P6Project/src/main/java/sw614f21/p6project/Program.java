@@ -8,11 +8,11 @@ public class Program {
         //TPMiner tpMiner = new TPMiner();
         CulturedMiner cultMiner = new CulturedMiner();
 
-        cultMiner.CultureMine(1,3);
-        //ArrayList<TemporalPattern> patterns = tpMiner.TPMine(2);
-
-        //for (int i = 0; i < patterns.size(); i++){
-       //    System.out.println("Pattern = " + patterns.get(i).TPattern);
-        //}
+        ArrayList<ClusterPattern> patterns = cultMiner.CultureMine(2,3);
+//        ArrayList<TemporalPattern> patterns = tpMiner.TPMine(2);
+        System.out.println(patterns.size());
+        for (int i = 0; i < patterns.size(); i++){
+           System.out.println("Pattern = " + patterns.get(i).Pattern);
+        }
     }
 }

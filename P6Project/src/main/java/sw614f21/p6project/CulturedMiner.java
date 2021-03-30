@@ -8,9 +8,9 @@ import java.util.Collections;
 
 
 public class CulturedMiner {
-    public ArrayList<TemporalPattern> TP = new ArrayList<TemporalPattern>();
+    public ArrayList<ClusterPattern> TP = new ArrayList<ClusterPattern>();
 
-    public ArrayList<TemporalPattern> CultureMine(int minSupport, double maxClusterDeviation){
+    public ArrayList<ClusterPattern> CultureMine(int minSupport, double maxClusterDeviation){
         FakeDataSet FDS = new FakeDataSet();
         ArrayList<EndpointSequence> OriginalDatabase = FDS.GetFakeData();
         
@@ -109,7 +109,7 @@ public class CulturedMiner {
     }
     
     int DBSequenceID = 0;
-    private ArrayList<EndpointSequence> GetProjectedDB(ArrayList<EndpointSequence> inputDB, PatternSymbol patternSymbol, boolean first) {
+    private ArrayList<EndpointSequence> GetProjectedDB(ArrayList<EndpointSequence> inputDB, ClusterSymbol patternSymbol, boolean first) {
         ArrayList<EndpointSequence> projectedDB = new ArrayList<EndpointSequence>();
 
         // iterate through each sequence, to project them.
@@ -141,7 +141,7 @@ public class CulturedMiner {
         return projectedDB;
     }
     
-    public void RecursivePostfixScan (EndpointSequence endpointSequence, ArrayList<EndpointSequence> projectedDB, PatternSymbol patternSymbol, int k) {
+    public void RecursivePostfixScan (EndpointSequence endpointSequence, ArrayList<EndpointSequence> projectedDB, ClusterSymbol patternSymbol, int k) {
         k = k + 1;
         for (; k < endpointSequence.Sequence.size(); k++) {
             if (patternSymbol.SymbolID == endpointSequence.Sequence.get(k).SymbolID && patternSymbol.Start == endpointSequence.Sequence.get(k).Start) {
@@ -175,18 +175,22 @@ public class CulturedMiner {
         ArrayList<ClusterSymbol> FE = new ArrayList<ClusterSymbol>();
         FE = CountSupport(alpha, database, minSupport);
         FE = PointPruning(FE, alpha);
-        /*for (int i = 0; i< FE.size(); i++){
-            TemporalPattern alphaPrime = new TemporalPattern(new ArrayList<PatternSymbol>(alpha.Pattern));
+        // Obtained clusters here.
+
+        for (int i = 0; i< FE.size(); i++){
+            ClusterPattern alphaPrime = new ClusterPattern();
+            alphaPrime.Pattern.addAll(alpha.Pattern);
             alphaPrime.Pattern.add(FE.get(i));
 
-            if (IsTemporalPattern(alphaPrime)){
-                TemporalPattern newPattern = new TemporalPattern(new ArrayList<PatternSymbol>(alphaPrime.Pattern));
+            if (IsClusterPattern(alphaPrime)){
+                ClusterPattern newPattern = new ClusterPattern();
+                newPattern.Pattern.addAll(alphaPrime.Pattern);
                 TP.add(alphaPrime);
             }
 
             ArrayList<EndpointSequence> projectedDatabase = DBConstruct(database, alphaPrime);
-            TPSpan(alphaPrime, projectedDatabase, minSupport);
-        }*/
+            TPSpan(alphaPrime, projectedDatabase, minSupport, maxClusterDeviation);
+        }
         database.clear();
     }
 
@@ -201,18 +205,14 @@ public class CulturedMiner {
                 ClusterSymbol CS = new ClusterSymbol(sequence.Sequence.get(j).SymbolID, sequence.Sequence.get(j).Start);
 
                 int position = symbolCounter.indexOf(CS);
-                System.out.println(CS.toString());
-                System.out.println("sequence: " + sequence.ID);
-                System.out.println("Size before:" + symbolCounter.size());
+
                 if (position == -1){
                     CS.ClusterElements = new ArrayList<ClusterElement>();
                     position = symbolCounter.size();
                     symbolCounter.add(CS);
                 }
-                System.out.println("Size after:" + symbolCounter.size());
-                System.out.println("");
 
-                ClusterElement element = new ClusterElement(sequence.Sequence.get(j).Timestamp, sequence.ID);
+                ClusterElement element = new ClusterElement(sequence.Sequence.get(j).Timestamp, sequence);
                 symbolCounter.get(position).ClusterElements.add(element);
 
                 if (CS.Start == false){
@@ -259,5 +259,103 @@ public class CulturedMiner {
         }
         return output;
     }
-    
+
+    public boolean IsClusterPattern(ClusterPattern alpha){
+        // go through each symbol in alpha.
+        ArrayList<ClusterSymbol> tempAlpha = new ArrayList<>(alpha.Pattern);
+        while(!tempAlpha.isEmpty()){
+            if (tempAlpha.size() % 2 != 0){
+                return false;
+            }
+            PatternSymbol symbol = tempAlpha.get(0);
+            if (symbol.Start){
+                boolean hasPartner = false;
+                //check the rest of the pattern to see if the starting symbol has a matching finishing symbol.
+                for (int j = 1; j < tempAlpha.size(); j++){
+                    if (symbol.SymbolID == tempAlpha.get(j).SymbolID && tempAlpha.get(j).Start){
+                        return false;
+                    }
+                    if (symbol.SymbolID == tempAlpha.get(j).SymbolID && !tempAlpha.get(j).Start){
+                        hasPartner = true;
+
+                        tempAlpha.remove(tempAlpha.get(j));
+                        tempAlpha.remove(tempAlpha.get(0));
+                        break;
+                    }
+                }
+                if (hasPartner == false){
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
+        }
+        //System.out.println("alpha = " + alpha.TPattern);
+        return true;
+    }
+
+    public ArrayList<EndpointSequence> DBConstruct (ArrayList<EndpointSequence> inputDB, ClusterPattern alpha){
+        ArrayList<EndpointSequence> projectedDatabase = new ArrayList<EndpointSequence>();
+        projectedDatabase = GetClusterProjectedDB(alpha.Pattern.get(alpha.Pattern.size() - 1));
+
+        // remove finishing endpoint.
+        for (int i = 0; i < projectedDatabase.size(); i++){
+
+            ArrayList<Endpoint> sequence = projectedDatabase.get(i).Sequence;
+            ArrayList<Endpoint> pruneList = new ArrayList<Endpoint>();
+            for (int j = sequence.size()-1; j >= 0; j--){
+                boolean correspondingEndpoint = false;
+                if (sequence.get(j).Start == false){
+
+                    for (int k = j; k >= 0; k--){
+                        if (sequence.get(k).Start == true && sequence.get(j).SymbolID == sequence.get(k).SymbolID && sequence.get(j).OccurrenceID == sequence.get(k).OccurrenceID){
+                            correspondingEndpoint = true;
+                        }
+                    }
+                    if (correspondingEndpoint == false){
+                        ClusterSymbol CS = new ClusterSymbol(sequence.get(j).SymbolID, sequence.get(j).Start);
+                        correspondingEndpoint = IsInAlpha(alpha, CS);
+                    }
+                    if (correspondingEndpoint == false){
+                        pruneList.add(sequence.get(j));
+                    }
+                }
+            }
+            sequence.removeAll(pruneList);
+        }
+        return projectedDatabase;
+    }
+
+    private ArrayList<EndpointSequence> GetClusterProjectedDB(ClusterSymbol clusterSymbol) {
+        ArrayList<EndpointSequence> projectedDB = new ArrayList<EndpointSequence>();
+
+        // iterate through each sequence, to project them.
+        for (int i = 0; i < clusterSymbol.ClusterElements.size(); i++) {
+            EndpointSequence endpointSequence = clusterSymbol.ClusterElements.get(i).Sequence;
+
+            //skip ahead to the last symbol in the pattern.
+            int k = 0;
+            for (; k < endpointSequence.Sequence.size(); k++) {
+                if (clusterSymbol.SymbolID == endpointSequence.Sequence.get(k).SymbolID && clusterSymbol.Start == endpointSequence.Sequence.get(k).Start){
+                    k++;
+                    break;
+                }
+            }
+
+            if (k > 0){
+                createSequences(endpointSequence, k, projectedDB);
+            }
+            else {
+                EndpointSequence newEndpointSequence = new EndpointSequence(DBSequenceID++, new ArrayList<Endpoint>());
+                for (; k < endpointSequence.Sequence.size(); k++){
+                    newEndpointSequence.Sequence.add(endpointSequence.Sequence.get(k));
+                }
+            }
+        }
+        return projectedDB;
+    }
+
+
+
 }
