@@ -16,4 +16,9 @@ public class ClusterSymbol extends PatternSymbol{
         super(symbolID, start);
 
     }
+    
+    @Override
+    public String toString() {
+        return SymbolID.toString().concat((Start ? "+" : "-").concat(" Mean =").concat(((Double)Mean).toString()));
+    }
 }
