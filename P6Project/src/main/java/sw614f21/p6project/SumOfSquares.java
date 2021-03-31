@@ -9,7 +9,7 @@ public class SumOfSquares {
     public double Increment(int x){
         i++;
         d += (i - 1) / i * Math.pow(x - mean, 2);
-        mean += (x + (i - 1) * mean) / i;
+        mean = (x + (i - 1) * mean) / i;
         return d;
     }
 
