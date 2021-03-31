@@ -11,8 +11,8 @@ public class CulturedMiner  {
     public ArrayList<ClusterPattern> TP = new ArrayList<ClusterPattern>();
 
     public ArrayList<ClusterPattern> CultureMine(int minSupport, double maxClusterDeviation) throws IOException{
-//        FakeDataSet FDS = new FakeDataSet();
-//        ArrayList<EndpointSequence> OriginalDatabase = FDS.GetFakeData();
+        //FakeDataSet FDS = new FakeDataSet();
+        //ArrayList<EndpointSequence> OriginalDatabase = FDS.GetFakeData();
         ArrayList<OccurrenceSequence> occurrenceDB = CSVReader.GetOccurrenceSequences();
         ArrayList<EndpointSequence> OriginalDatabase = CSVReader.GetEndpointSequences(occurrenceDB);
         
@@ -22,7 +22,7 @@ public class CulturedMiner  {
         
         for (int i = 0; i < FE.size(); i++){
             ClusterSymbol symbol = new ClusterSymbol(FE.get(i).SymbolID, FE.get(i).Start, FE.get(i).Mean, FE.get(i).Deviation);
-            ArrayList<EndpointSequence> projectedDB = GetProjectedDB(OriginalDatabase, symbol, true);
+            ArrayList<EndpointSequence> projectedDB = GetProjectedDB(OriginalDatabase, symbol);
 
 
             ClusterPattern temp = new ClusterPattern();
@@ -111,7 +111,7 @@ public class CulturedMiner  {
     }
     
     int DBSequenceID = 0;
-    private ArrayList<EndpointSequence> GetProjectedDB(ArrayList<EndpointSequence> inputDB, ClusterSymbol patternSymbol, boolean first) {
+    private ArrayList<EndpointSequence> GetProjectedDB(ArrayList<EndpointSequence> inputDB, ClusterSymbol patternSymbol) {
         ArrayList<EndpointSequence> projectedDB = new ArrayList<EndpointSequence>();
 
         // iterate through each sequence, to project them.
@@ -122,23 +122,15 @@ public class CulturedMiner  {
             int k = 0;
             for (; k < endpointSequence.Sequence.size(); k++) {
                 if (patternSymbol.SymbolID == endpointSequence.Sequence.get(k).SymbolID && patternSymbol.Start == endpointSequence.Sequence.get(k).Start){
-                    if (first){
-                        RecursivePostfixScan(endpointSequence, projectedDB, patternSymbol, k);
-                    }
+                    RecursivePostfixScan(endpointSequence, projectedDB, patternSymbol, k);
                     k++;
                     break;
                 }
             }
             
-            if (first && k > 0){
-                createSequences(endpointSequence, k, projectedDB);
-            }
-            else {
-                EndpointSequence newEndpointSequence = new EndpointSequence(DBSequenceID++, new ArrayList<Endpoint>());
-                for (; k < endpointSequence.Sequence.size(); k++){
-                    newEndpointSequence.Sequence.add(endpointSequence.Sequence.get(k));
-                }
-            }
+            createSequences(endpointSequence, k, projectedDB);
+            
+
         }
         return projectedDB;
     }
@@ -191,6 +183,7 @@ public class CulturedMiner  {
             }
 
             ArrayList<EndpointSequence> projectedDatabase = DBConstruct(database, alphaPrime);
+            FE.get(i).ClusterElements = null;
             TPSpan(alphaPrime, projectedDatabase, minSupport, maxClusterDeviation);
         }
         database.clear();
@@ -347,15 +340,12 @@ public class CulturedMiner  {
                 }
             }
 
-            if (k > 0){
-                createSequences(endpointSequence, k, projectedDB);
+            
+            EndpointSequence newEndpointSequence = new EndpointSequence(DBSequenceID++, new ArrayList<Endpoint>());
+            for (; k < endpointSequence.Sequence.size(); k++){
+                newEndpointSequence.Sequence.add(endpointSequence.Sequence.get(k));
             }
-            else {
-                EndpointSequence newEndpointSequence = new EndpointSequence(DBSequenceID++, new ArrayList<Endpoint>());
-                for (; k < endpointSequence.Sequence.size(); k++){
-                    newEndpointSequence.Sequence.add(endpointSequence.Sequence.get(k));
-                }
-            }
+            
         }
         return projectedDB;
     }
@@ -391,8 +381,8 @@ public class CulturedMiner  {
 
         for (int i = 0; i <= n; i++) {
             for (int j = 0; j <= n; j++){
-                D[i][j] = Integer.MAX_VALUE;
-                B[i][j] = Integer.MAX_VALUE;
+                D[i][j] = Double.POSITIVE_INFINITY;
+                B[i][j] = -1;
             }
         }
         D[0][0] = 0;
@@ -435,7 +425,7 @@ public class CulturedMiner  {
             leftmostElements.add(0, B[n][k] - 1);
             n = B[n][k] - 1;
         }
-        leftmostElements.add(n);
+        leftmostElements.add(elements.size());
 
         for (int i = 0; i < leftmostElements.size() - 1; i++) {
             ClusterSymbol newCluster = new ClusterSymbol(symbol.SymbolID, symbol.Start);
