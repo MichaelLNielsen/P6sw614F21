@@ -91,7 +91,7 @@ public class CulturedMiner  {
             if (symbolData.size() >= minSupport) {
 
                 double mean = FindMean(symbolData);
-                double deviation = Collections.max(symbolData) - Collections.min(symbolData);
+                double deviation = GetIntegerDeviation(symbolData, mean);  //Collections.max(symbolData) - Collections.min(symbolData);
                 ClusterSymbol symbol = new ClusterSymbol(type, true, mean, deviation);
                 
                 resultList.add(symbol);
@@ -346,6 +346,10 @@ public class CulturedMiner  {
                 newEndpointSequence.Sequence.add(endpointSequence.Sequence.get(k));
             }
             
+            if (newEndpointSequence.Sequence.size()> 0){
+                projectedDB.add(newEndpointSequence);
+            }
+            
         }
         return projectedDB;
     }
@@ -445,7 +449,7 @@ public class CulturedMiner  {
 
         for (int i = 0; i < output.size(); i++) {
             output.get(i).Mean = GetClusterMean(output.get(i).ClusterElements);
-            output.get(i).Deviation = GetClusterDeviation(output.get(i).ClusterElements);
+            output.get(i).Deviation = GetClusterDeviation2(output.get(i).ClusterElements, output.get(i).Mean);
             if (output.get(i).Deviation > maxClusterDeviation){
                 return false;
             }
@@ -466,5 +470,35 @@ public class CulturedMiner  {
     private double GetClusterDeviation(ArrayList<ClusterElement> elements) {
         return elements.get(elements.size() - 1).TimeStamp - elements.get(0).TimeStamp;
     }
-
+    
+    private double GetClusterDeviation2(ArrayList<ClusterElement> elements, double mean){
+        if (elements.size() == 1) {
+            return 0;
+        }
+        else {
+            double sum = 0;
+            for (int i = 0; i < elements.size();i++){
+                sum += Math.pow(elements.get(i).TimeStamp - mean ,2);
+            }
+            sum = sum / (elements.size()- 1.0);
+            sum = Math.sqrt(sum);
+            return sum;
+        }
+    }
+    
+    private double GetIntegerDeviation(ArrayList<Integer> elements, double mean){
+        if (elements.size() == 1) {
+            return 0;
+        }
+        else {
+            double sum = 0;
+            for (int i = 0; i < elements.size();i++){
+                sum += Math.pow(elements.get(i)- mean ,2);
+            }
+            sum = sum / (elements.size()- 1.0);
+            sum = Math.sqrt(sum);
+            return sum;
+        }
+    }
+    
 }
