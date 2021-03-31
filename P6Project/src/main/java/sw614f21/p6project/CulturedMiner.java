@@ -9,14 +9,14 @@ import java.io.IOException;
 
 public class CulturedMiner  {
     public ArrayList<ClusterPattern> TP = new ArrayList<ClusterPattern>();
-
-    public ArrayList<ClusterPattern> CultureMine(int minSupport, double maxClusterDeviation) throws IOException{
+    public int TimeThreshold;
+    public ArrayList<ClusterPattern> CultureMine(int minSupport, double maxClusterDeviation, int timeThreshold) throws IOException{
         //FakeDataSet FDS = new FakeDataSet();
         //ArrayList<EndpointSequence> OriginalDatabase = FDS.GetFakeData();
         ArrayList<OccurrenceSequence> occurrenceDB = CSVReader.GetOccurrenceSequences();
         ArrayList<EndpointSequence> OriginalDatabase = CSVReader.GetEndpointSequences(occurrenceDB);
         
-        
+        TimeThreshold = timeThreshold;
         //getting the frequent endpoints.
         ArrayList<ClusterSymbol> FE = GetFrequentStartingEndpoints(OriginalDatabase, minSupport);
         
@@ -156,7 +156,9 @@ public class CulturedMiner  {
 
             Endpoint oldEndpoint = endpointSequence.Sequence.get(position);
             Endpoint endpointCopy = new Endpoint(oldEndpoint.SymbolID, oldEndpoint.Timestamp - timestamp, oldEndpoint.Start, oldEndpoint.OccurrenceID);
-
+            if (endpointCopy.Timestamp > TimeThreshold){
+                break;
+            }
             newEndpointSequence.Sequence.add(endpointCopy);
         }
         
