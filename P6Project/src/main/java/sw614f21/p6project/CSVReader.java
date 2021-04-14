@@ -10,6 +10,56 @@ import java.util.stream.Collectors;
 
 public class CSVReader {
 
+    public static ArrayList<OccurrenceSequence> GetBenchmarkSequences() throws IOException {
+        FileInputStream in = null;
+        ArrayList<OccurrenceSequence> output = new ArrayList<OccurrenceSequence>();
+        HashMap<Integer, OccurrenceSequence> SequenceDays = new HashMap<>();
+
+        BufferedReader csvReader = new BufferedReader(new FileReader("resources/house_dataset.csv"));
+//        csvReader.mark();
+//        long count = csvReader.lines().count();
+//        csvReader.reset();
+        String row = csvReader.readLine();
+        Date startEndpoint;
+        int day = 0;
+        EventType symbol = EventType.FanOn;
+        SymbolOccurrence activeEvent = null;
+        Date startDate = null;
+        while ((row = csvReader.readLine()) != null) {
+
+            String[] data = row.split(",");
+
+            //HOURS SHOULD PROBABLY BE SECONDS
+            Date date = new Date((int)Math.floor(Integer.parseInt(data[0]) / 86400),Integer.parseInt(data[0]) % 86400);
+            if (!SequenceDays.containsKey(date.Days)) {
+                OccurrenceSequence daySequence = new OccurrenceSequence(day, new ArrayList<SymbolOccurrence>());
+                output.add(daySequence);
+                SequenceDays.put(date.Days, daySequence);
+            }
+
+            double value = Double.parseDouble(data[1]);
+
+            boolean overThreshold = value > 0;
+
+            if (overThreshold && activeEvent == null) {
+                startDate = date;
+                activeEvent = new SymbolOccurrence(symbol, date.Hours);
+            }
+            else if (!overThreshold && activeEvent != null) {
+
+                activeEvent.FinishingTime = 86400 * (date.Days - startDate.Days) + date.Hours;
+                SequenceDays.get(startDate.Days).Sequence.add(activeEvent);
+                activeEvent = null;
+                startDate = null;
+            }
+        }
+
+        csvReader.close();
+
+        return output;
+
+    }
+
     public static ArrayList<OccurrenceSequence> GetOccurrenceSequences() throws IOException {
 
         FileInputStream in = null;
