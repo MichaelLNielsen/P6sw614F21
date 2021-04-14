@@ -11,50 +11,61 @@ import java.util.stream.Collectors;
 public class CSVReader {
 
     public static ArrayList<OccurrenceSequence> GetBenchmarkSequences() throws IOException {
-        FileInputStream in = null;
+
+
         ArrayList<OccurrenceSequence> output = new ArrayList<OccurrenceSequence>();
         HashMap<Integer, OccurrenceSequence> SequenceDays = new HashMap<>();
+        ArrayList<String> events = new ArrayList<String>();
+        events.add("ChildLamp");
+        events.add("HairDryer");
+        events.add("Kettle");
+        events.add("KitchenLamp");
+        events.add("LEDPrinter");
+        events.add("LivingRoomLampTv");
+        events.add("Microwave");
+        events.add("TVdata");
 
-        BufferedReader csvReader = new BufferedReader(new FileReader("resources/house_dataset.csv"));
-//        csvReader.mark();
-//        long count = csvReader.lines().count();
-//        csvReader.reset();
-        String row = csvReader.readLine();
-        Date startEndpoint;
-        int day = 0;
-        EventType symbol = EventType.FanOn;
-        SymbolOccurrence activeEvent = null;
-        Date startDate = null;
-        while ((row = csvReader.readLine()) != null) {
 
-            String[] data = row.split(",");
+        for (int i = 0; i < events.size(); i++) {
 
-            //HOURS SHOULD PROBABLY BE SECONDS
-            Date date = new Date((int)Math.floor(Integer.parseInt(data[0]) / 86400),Integer.parseInt(data[0]) % 86400);
-            if (!SequenceDays.containsKey(date.Days)) {
-                OccurrenceSequence daySequence = new OccurrenceSequence(day, new ArrayList<SymbolOccurrence>());
-                output.add(daySequence);
-                SequenceDays.put(date.Days, daySequence);
+            BufferedReader csvReader = new BufferedReader(new FileReader("resources/ukdale/" + events.get(i) + ".csv"));
+            String row;
+            String symbol = events.get(i);
+            SymbolOccurrence activeEvent = null;
+            Date startDate = null;
+
+            while ((row = csvReader.readLine()) != null) {
+
+                String[] data = row.split(",");
+
+                //HOURS SHOULD PROBABLY BE SECONDS
+                Date date = new Date((int) Math.floor(Integer.parseInt(data[0]) / 86400), Integer.parseInt(data[0]) % 86400);
+                if (!SequenceDays.containsKey(date.Days)) {
+                    OccurrenceSequence daySequence = new OccurrenceSequence(date.Days, new ArrayList<SymbolOccurrence>());
+                    SequenceDays.put(date.Days, daySequence);
+                }
+
+                int value = Integer.parseInt(data[1]);
+                boolean overThreshold = value > 0;
+
+                if (overThreshold && activeEvent == null) {
+                    startDate = date;
+                    activeEvent = new SymbolOccurrence(symbol, date.Hours);
+                } else if (!overThreshold && activeEvent != null) {
+                    activeEvent.FinishingTime = 86400 * (date.Days - startDate.Days) + date.Hours;
+                    SequenceDays.get(startDate.Days).Sequence.add(activeEvent);
+                    activeEvent = null;
+                    startDate = null;
+                }
             }
 
-            double value = Double.parseDouble(data[1]);
-
-            boolean overThreshold = value > 0;
-
-            if (overThreshold && activeEvent == null) {
-                startDate = date;
-                activeEvent = new SymbolOccurrence(symbol, date.Hours);
-            }
-            else if (!overThreshold && activeEvent != null) {
-
-                activeEvent.FinishingTime = 86400 * (date.Days - startDate.Days) + date.Hours;
-                SequenceDays.get(startDate.Days).Sequence.add(activeEvent);
-                activeEvent = null;
-                startDate = null;
-            }
+            csvReader.close();
         }
 
-        csvReader.close();
+        ArrayList<Integer> keyset = new ArrayList<Integer>(SequenceDays.keySet());
+        for (int i = 0; i < keyset.size(); i++) {
+            output.add(SequenceDays.get(keyset.get(i)));
+        }
 
         return output;
 
