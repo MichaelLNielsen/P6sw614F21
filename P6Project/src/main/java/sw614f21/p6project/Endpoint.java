@@ -1,9 +1,5 @@
 package sw614f21.p6project;
 
-/**
- *
- * @author Michael
- */
 public class Endpoint extends Symbol implements Comparable<Endpoint>{
     public Integer Timestamp;
     public Integer OccurrenceID;
@@ -30,7 +26,7 @@ public class Endpoint extends Symbol implements Comparable<Endpoint>{
     }
     @Override
     public String toString(){
-        String output = SymbolID.toString() + " " + (Start ? '+' :  '-') + " " + Timestamp.toString();
+        String output = EventID + (Start ? '+' :  '-') + " " + Timestamp.toString();
         return output;
     }
 }
