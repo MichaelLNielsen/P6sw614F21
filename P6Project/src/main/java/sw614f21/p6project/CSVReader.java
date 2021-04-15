@@ -18,6 +18,9 @@ public class CSVReader {
         events.add("LivingRoomLampTv");
         events.add("Microwave");
         events.add("TVdata");
+        events.add("CoffeeMachine");
+        events.add("Dishwasher");
+        events.add("SubwooferLivingRoom");
 
 
         for (int i = 0; i < events.size(); i++) {
