@@ -6,10 +6,10 @@ import java.util.Collections;
 public class Program {
     public static void main(String[] args) throws IOException{
    
-        TPMiner tpMiner = new TPMiner();
+        //TPMiner tpMiner = new TPMiner();
         CulturedMiner cultMiner = new CulturedMiner();
 
-        ArrayList<ClusterPattern> patterns = cultMiner.CultureMine(500, 3, 3);
+        ArrayList<ClusterPattern> patterns = cultMiner.CultureMine(1400, 86400, 800);
 //        ArrayList<TemporalPattern> patterns = tpMiner.TPMine(2);
         System.out.println(patterns.size());
         for (int i = 0; i < patterns.size(); i++){
@@ -17,7 +17,8 @@ public class Program {
         }
 
 //        ArrayList<OccurrenceSequence> output = CSVReader.GetBenchmarkSequences();
-//        for (OccurrenceSequence seq : output) {
+//        ArrayList<EndpointSequence> endpointsequences = CSVReader.GetEndpointSequences(output);
+//        for (EndpointSequence seq : endpointsequences) {
 //            System.out.println(seq.Sequence);
 //        }
 //        System.out.println("Number of days: " + output.size());
