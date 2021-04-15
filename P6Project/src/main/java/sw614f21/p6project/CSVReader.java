@@ -27,7 +27,7 @@ public class CSVReader {
 
 
         for (int i = 0; i < events.size(); i++) {
-
+            
             BufferedReader csvReader = new BufferedReader(new FileReader("resources/ukdale/" + events.get(i) + ".csv"));
             String row;
             String symbol = events.get(i);
@@ -50,9 +50,9 @@ public class CSVReader {
 
                 if (overThreshold && activeEvent == null) {
                     startDate = date;
-                    activeEvent = new SymbolOccurrence(symbol, date.Hours);
+                    activeEvent = new SymbolOccurrence(symbol, date.TimeStamp);
                 } else if (!overThreshold && activeEvent != null) {
-                    activeEvent.FinishingTime = 86400 * (date.Days - startDate.Days) + date.Hours;
+                    activeEvent.FinishingTime = 86400 * (date.Days - startDate.Days) + date.TimeStamp;
                     SequenceDays.get(startDate.Days).Sequence.add(activeEvent);
                     activeEvent = null;
                     startDate = null;
@@ -113,14 +113,14 @@ public class CSVReader {
                 if (overThreshold && !ongoingEvents.getOrDefault(symbol, false)) {
                     ongoingEvents.put(symbol, true);
                     startEndpoints.put(symbol, date);
-                    SymbolOccurrence occurrence = new SymbolOccurrence(symbol, date.Hours);
+                    SymbolOccurrence occurrence = new SymbolOccurrence(symbol, date.TimeStamp);
                     output.get(date.Days - 1).Sequence.add(occurrence);
                     startingSymbols.put(symbol, occurrence);
                 }
                 else if (!overThreshold && ongoingEvents.getOrDefault(symbol, false)) {
                     Date startDate = startEndpoints.get(symbol);
-                    int startRow = 24 * (startDate.Days - 1) + startDate.Hours;
-                    int finishingTime = j - startRow + startDate.Hours;
+                    int startRow = 24 * (startDate.Days - 1) + startDate.TimeStamp;
+                    int finishingTime = j - startRow + startDate.TimeStamp;
                     startingSymbols.get(symbol).FinishingTime = finishingTime;
                     startingSymbols.remove(symbol);
                     ongoingEvents.remove(symbol);
@@ -149,8 +149,8 @@ public class CSVReader {
             
             for (int j = 0; j < occurrenceSequence.Sequence.size(); j++){
                 SymbolOccurrence SO = occurrenceSequence.Sequence.get(j);
-                Endpoint startEndpoint = new Endpoint(SO.SymbolID, SO.StartingTime, true, j);
-                Endpoint finishingEndpoint = new Endpoint(SO.SymbolID, SO.FinishingTime, false, j);
+                Endpoint startEndpoint = new Endpoint(SO.EventID, SO.StartingTime, true, j);
+                Endpoint finishingEndpoint = new Endpoint(SO.EventID, SO.FinishingTime, false, j);
                 endpointSequence.Sequence.add(startEndpoint);
                 endpointSequence.Sequence.add(finishingEndpoint);
             }
