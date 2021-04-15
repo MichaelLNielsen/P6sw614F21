@@ -53,7 +53,7 @@ public class TPMiner {
                 Endpoint endpoint = sequence.get(j);
 
                 if (endpoint.Start) {
-                    int count = symbolCounter.getOrDefault(endpoint.SymbolID, 0);
+                    int count = symbolCounter.getOrDefault(endpoint.EventID, 0);
                     symbolCounter.put(endpoint.EventID, count + 1);
                 }
             }
@@ -70,7 +70,7 @@ public class TPMiner {
             for (int j = 0; j < sequence.size(); j++) {
                 Endpoint endpoint = sequence.get(j);
 
-                if (symbolCounter.get(endpoint.SymbolID) < minSupport) {
+                if (symbolCounter.get(endpoint.EventID) < minSupport) {
                     endpointsToBeRemoved.add(endpoint);
                 }
             }
