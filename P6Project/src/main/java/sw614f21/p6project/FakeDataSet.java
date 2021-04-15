@@ -11,17 +11,17 @@ public class FakeDataSet {
     
     public ArrayList<EndpointSequence> GetFakeData (){
         // create sequence1:
-        Endpoint s1AStart = new Endpoint(EventType.HeatPumpOn, 1, true, 1);
-        Endpoint s1AFinish = new Endpoint(EventType.HeatPumpOn, 4, false, 1);
+        Endpoint s1AStart = new Endpoint("A", 1, true, 1);
+        Endpoint s1AFinish = new Endpoint("A", 4, false, 1);
         
-        Endpoint s1BStart = new Endpoint(EventType.PowerPlugsDiningRoomOn, 3, true, 1);
-        Endpoint s1BFinish = new Endpoint(EventType.PowerPlugsDiningRoomOn, 6, false, 1);
+        Endpoint s1BStart = new Endpoint("B", 3, true, 1);
+        Endpoint s1BFinish = new Endpoint("B", 6, false, 1);
         
-        Endpoint s1CStart = new Endpoint(EventType.PowerPlugsAtticOn, 8, true, 1);
-        Endpoint s1CFinish = new Endpoint(EventType.PowerPlugsAtticOn, 12, false, 1);
+        Endpoint s1CStart = new Endpoint("C", 8, true, 1);
+        Endpoint s1CFinish = new Endpoint("C", 12, false, 1);
         
-        Endpoint s1DStart = new Endpoint(EventType.PowerPlugsMasterBedroomOn, 8, true, 1);
-        Endpoint s1DFinish = new Endpoint(EventType.PowerPlugsMasterBedroomOn, 12, false, 1);
+        Endpoint s1DStart = new Endpoint("D", 8, true, 1);
+        Endpoint s1DFinish = new Endpoint("D", 12, false, 1);
         
         sequence1.add(s1AStart);
         sequence1.add(s1AFinish);
@@ -37,14 +37,14 @@ public class FakeDataSet {
         
         // create sequence2:
         
-        Endpoint s2BStart = new Endpoint(EventType.PowerPlugsDiningRoomOn, 3, true, 1);
-        Endpoint s2BFinish = new Endpoint(EventType.PowerPlugsDiningRoomOn, 6, false, 1);
+        Endpoint s2BStart = new Endpoint("B", 3, true, 1);
+        Endpoint s2BFinish = new Endpoint("B", 6, false, 1);
         
-        Endpoint s2CStart = new Endpoint(EventType.PowerPlugsAtticOn, 8, true, 1);
-        Endpoint s2CFinish = new Endpoint(EventType.PowerPlugsAtticOn, 12, false, 1);
+        Endpoint s2CStart = new Endpoint("C", 8, true, 1);
+        Endpoint s2CFinish = new Endpoint("C", 12, false, 1);
         
-        Endpoint s2DStart = new Endpoint(EventType.PowerPlugsMasterBedroomOn, 8, true, 1);
-        Endpoint s2DFinish = new Endpoint(EventType.PowerPlugsMasterBedroomOn, 12, false, 1);
+        Endpoint s2DStart = new Endpoint("D", 8, true, 1);
+        Endpoint s2DFinish = new Endpoint("D", 12, false, 1);
         
         sequence2.add(s2BStart);
         sequence2.add(s2BFinish);
@@ -57,11 +57,11 @@ public class FakeDataSet {
         
         // create sequence3:
         
-        Endpoint s3CStart = new Endpoint(EventType.PowerPlugsAtticOn, 6, true, 1);
-        Endpoint s3CFinish = new Endpoint(EventType.PowerPlugsAtticOn, 8, false, 1);
+        Endpoint s3CStart = new Endpoint("C", 6, true, 1);
+        Endpoint s3CFinish = new Endpoint("C", 8, false, 1);
         
-        Endpoint s3DStart = new Endpoint(EventType.PowerPlugsMasterBedroomOn, 6, true, 1);
-        Endpoint s3DFinish = new Endpoint(EventType.PowerPlugsMasterBedroomOn, 8, false, 1);
+        Endpoint s3DStart = new Endpoint("D", 6, true, 1);
+        Endpoint s3DFinish = new Endpoint("D", 8, false, 1);
         
         sequence3.add(s3CStart);
         sequence3.add(s3CFinish);
@@ -71,17 +71,17 @@ public class FakeDataSet {
         
         // create sequence 4:
         
-        Endpoint s4AStart = new Endpoint(EventType.HeatPumpOn, 1, true, 1);
-        Endpoint s4AFinish = new Endpoint(EventType.HeatPumpOn, 3, false, 1);
+        Endpoint s4AStart = new Endpoint("A", 1, true, 1);
+        Endpoint s4AFinish = new Endpoint("A", 3, false, 1);
         
-        Endpoint s4CStart = new Endpoint(EventType.PowerPlugsAtticOn, 6, true, 1);
-        Endpoint s4CFinish = new Endpoint(EventType.PowerPlugsAtticOn, 8, false, 1);
+        Endpoint s4CStart = new Endpoint("C", 6, true, 1);
+        Endpoint s4CFinish = new Endpoint("C", 8, false, 1);
         
-        Endpoint s4DStart = new Endpoint(EventType.PowerPlugsMasterBedroomOn, 6, true, 1);
-        Endpoint s4DFinish = new Endpoint(EventType.PowerPlugsMasterBedroomOn, 8, false, 1);
+        Endpoint s4DStart = new Endpoint("D", 6, true, 1);
+        Endpoint s4DFinish = new Endpoint("D", 8, false, 1);
         
-        Endpoint s4EStart = new Endpoint(EventType.PowerPlugsBedroom2On, 12, true, 1);
-        Endpoint s4EFinish = new Endpoint(EventType.PowerPlugsBedroom2On, 14, false, 1);
+        Endpoint s4EStart = new Endpoint("E", 12, true, 1);
+        Endpoint s4EFinish = new Endpoint("E", 14, false, 1);
         
         sequence4.add(s4AStart);
         sequence4.add(s4AFinish);
