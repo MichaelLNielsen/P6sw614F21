@@ -13,8 +13,12 @@ public class CulturedMiner  {
     public ArrayList<ClusterPattern> CultureMine(int minSupport, double maxClusterDeviation, int timeThreshold) throws IOException{
         //FakeDataSet FDS = new FakeDataSet();
         //ArrayList<EndpointSequence> OriginalDatabase = FDS.GetFakeData();
-        ArrayList<OccurrenceSequence> occurrenceDB = CSVReader.GetOccurrenceSequences();
+        //ArrayList<OccurrenceSequence> occurrenceDB = CSVReader.GetOccurrenceSequences();
+        //ArrayList<EndpointSequence> OriginalDatabase = CSVReader.GetEndpointSequences(occurrenceDB);
+        
+        ArrayList<OccurrenceSequence> occurrenceDB = CSVReader.GetBenchmarkSequences();
         ArrayList<EndpointSequence> OriginalDatabase = CSVReader.GetEndpointSequences(occurrenceDB);
+        
         
         TimeThreshold = timeThreshold;
         //getting the frequent endpoints.
