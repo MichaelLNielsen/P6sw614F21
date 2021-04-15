@@ -27,6 +27,6 @@ public class PatternSymbol extends Symbol {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PatternSymbol that = (PatternSymbol) o;
-        return Start == that.Start && EventID == that.EventID;
+        return Start == that.Start && EventID.equals(that.EventID);
     }
 }
