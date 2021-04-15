@@ -6,7 +6,8 @@ public class SymbolOccurrence extends Symbol {
     public int FinishingTime;
 
     public SymbolOccurrence (EventType SymbolID, int StartingTime){
-        this.SymbolID = SymbolID;
+        //this.SymbolID = SymbolID;
+        SetSymbolID(SymbolID);
         this.StartingTime = StartingTime;
     }
 
