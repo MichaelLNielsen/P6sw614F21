@@ -2,11 +2,11 @@ package sw614f21.p6project;
 
 public class Date {
     public int Days;
-    public int Hours;
+    public int TimeStamp;
 
-    public Date(int days, int hours) {
+    public Date(int days, int timeStamp) {
         Days = days;
-        Hours = hours;
+        TimeStamp = timeStamp;
     }
 
 
