@@ -41,7 +41,7 @@ public class TPMiner {
 
     public ArrayList<PatternSymbol> GetFrequentStartingEndpoints (ArrayList<EndpointSequence> endpointDB, int minSupport) {
 
-        HashMap<EventType, Integer> symbolCounter = new HashMap<EventType, Integer>();
+        HashMap<String, Integer> symbolCounter = new HashMap<String, Integer>();
         ArrayList<PatternSymbol> resultList = new ArrayList<PatternSymbol>();
 
         // counts the number of occurrences for each symbol type.
@@ -54,7 +54,7 @@ public class TPMiner {
 
                 if (endpoint.Start) {
                     int count = symbolCounter.getOrDefault(endpoint.SymbolID, 0);
-                    symbolCounter.put(endpoint.SymbolID, count + 1);
+                    symbolCounter.put(endpoint.EventID, count + 1);
                 }
             }
 
@@ -83,10 +83,10 @@ public class TPMiner {
         endpointDB.removeAll(sequencesToBeRemoved);
 
 
-        ArrayList<EventType> keys = new ArrayList<EventType>(symbolCounter.keySet());
+        ArrayList<String> keys = new ArrayList<String>(symbolCounter.keySet());
 
         for (int i = 0; i < keys.size(); i++) {
-            EventType type = keys.get(i);
+            String type = keys.get(i);
             if (symbolCounter.get(type) >= minSupport) {
 
                 PatternSymbol symbol = new PatternSymbol(type, true);
@@ -109,7 +109,7 @@ public class TPMiner {
             //skip ahead to the last symbol in the pattern.
             int k = 0;
             for (; k < endpointSequence.Sequence.size(); k++) {
-                if (patternSymbol.SymbolID == endpointSequence.Sequence.get(k).SymbolID && patternSymbol.Start == endpointSequence.Sequence.get(k).Start){
+                if (patternSymbol.EventID.equals(endpointSequence.Sequence.get(k).EventID) && patternSymbol.Start == endpointSequence.Sequence.get(k).Start){
                     if (first){
                         RecursivePostfixScan(endpointSequence, projectedDB, patternSymbol, k);
                     }
@@ -133,7 +133,7 @@ public class TPMiner {
     public void RecursivePostfixScan (EndpointSequence endpointSequence, ArrayList<EndpointSequence> projectedDB, PatternSymbol patternSymbol, int k) {
         k = k + 1;
         for (; k < endpointSequence.Sequence.size(); k++) {
-            if (patternSymbol.SymbolID == endpointSequence.Sequence.get(k).SymbolID && patternSymbol.Start == endpointSequence.Sequence.get(k).Start) {
+            if (patternSymbol.EventID.equals(endpointSequence.Sequence.get(k).EventID) && patternSymbol.Start == endpointSequence.Sequence.get(k).Start) {
                 RecursivePostfixScan(endpointSequence, projectedDB, patternSymbol, k);
                 k++;
                 break;
@@ -183,7 +183,7 @@ public class TPMiner {
             EndpointSequence sequence = database.get(i);
             
             for (int j = 0; j < sequence.Sequence.size(); j++){
-                PatternSymbol PS = new PatternSymbol(sequence.Sequence.get(j).SymbolID, sequence.Sequence.get(j).Start);
+                PatternSymbol PS = new PatternSymbol(sequence.Sequence.get(j).EventID, sequence.Sequence.get(j).Start);
 
                 int count = symbolCounter.getOrDefault(PS, 0);
                 symbolCounter.put(PS, count + 1);
@@ -210,7 +210,7 @@ public class TPMiner {
     private boolean IsInAlpha(TemporalPattern alpha, PatternSymbol PS){
         for (int i = 0; i < alpha.TPattern.size(); i++){
             PatternSymbol alphaSymbol = alpha.TPattern.get(i);
-            if (alphaSymbol.SymbolID == PS.SymbolID && alphaSymbol.Start && PS.Start == false ){
+            if (alphaSymbol.EventID.equals(PS.EventID) && alphaSymbol.Start && PS.Start == false ){
                 return true;
             }
         }
@@ -246,10 +246,10 @@ public class TPMiner {
                 boolean hasPartner = false;
                 //check the rest of the pattern to see if the starting symbol has a matching finishing symbol.
                 for (int j = 1; j < tempAlpha.size(); j++){
-                    if (symbol.SymbolID == tempAlpha.get(j).SymbolID && tempAlpha.get(j).Start){
+                    if (symbol.EventID.equals(tempAlpha.get(j).EventID) && tempAlpha.get(j).Start){
                         return false;
                     }
-                    if (symbol.SymbolID == tempAlpha.get(j).SymbolID && !tempAlpha.get(j).Start){
+                    if (symbol.EventID.equals(tempAlpha.get(j).EventID) && !tempAlpha.get(j).Start){
                         hasPartner = true;
 
                         tempAlpha.remove(tempAlpha.get(j));
@@ -283,12 +283,12 @@ public class TPMiner {
                 if (sequence.get(j).Start == false){
 
                     for (int k = j; k >= 0; k--){
-                        if (sequence.get(k).Start == true && sequence.get(j).SymbolID == sequence.get(k).SymbolID && sequence.get(j).OccurrenceID == sequence.get(k).OccurrenceID){
+                        if (sequence.get(k).Start == true && sequence.get(j).EventID.equals(sequence.get(k).EventID) && sequence.get(j).OccurrenceID == sequence.get(k).OccurrenceID){
                             correspondingEndpoint = true;
                         }
                     }
                     if (correspondingEndpoint == false){
-                        PatternSymbol PS = new PatternSymbol(sequence.get(j).SymbolID, sequence.get(j).Start);
+                        PatternSymbol PS = new PatternSymbol(sequence.get(j).EventID, sequence.get(j).Start);
                         correspondingEndpoint = IsInAlpha(alpha, PS);
                     }
                     if (correspondingEndpoint == false){
