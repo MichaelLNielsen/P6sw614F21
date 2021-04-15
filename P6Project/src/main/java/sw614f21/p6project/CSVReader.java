@@ -1,12 +1,6 @@
 package sw614f21.p6project;
-import jdk.jfr.Event;
-
-import javax.sound.midi.Sequence;
 import java.io.*;
-import java.lang.reflect.Array;
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 public class CSVReader {
 
@@ -66,21 +60,17 @@ public class CSVReader {
         for (int i = 0; i < keyset.size(); i++) {
             output.add(SequenceDays.get(keyset.get(i)));
         }
-
         return output;
 
     }
 
     public static ArrayList<OccurrenceSequence> GetOccurrenceSequences() throws IOException {
 
-        FileInputStream in = null;
         ArrayList<OccurrenceSequence> output = new ArrayList<OccurrenceSequence>();
 
 
         BufferedReader csvReader = new BufferedReader(new FileReader("resources/house_dataset.csv"));
-//        csvReader.mark();
-//        long count = csvReader.lines().count();
-//        csvReader.reset();
+
         String row = csvReader.readLine();
         HashMap<EventType, Date> startEndpoints = new HashMap<EventType, Date>();
         HashMap<EventType, Boolean> ongoingEvents = new HashMap<EventType, Boolean>();
@@ -100,7 +90,6 @@ public class CSVReader {
             String[] data = row.split(",");
             ArrayList<Double> values = new ArrayList<Double>();
             for (int i = 1; i < data.length; i++) {
-                //if (i < 40){ continue;}
 
                 double value = -10.0;
                 if (!data[i].equals("")){
@@ -113,7 +102,7 @@ public class CSVReader {
                 if (overThreshold && !ongoingEvents.getOrDefault(symbol, false)) {
                     ongoingEvents.put(symbol, true);
                     startEndpoints.put(symbol, date);
-                    SymbolOccurrence occurrence = new SymbolOccurrence(symbol, date.TimeStamp);
+                    SymbolOccurrence occurrence = new SymbolOccurrence(symbol.toString(), date.TimeStamp);
                     output.get(date.Days - 1).Sequence.add(occurrence);
                     startingSymbols.put(symbol, occurrence);
                 }
