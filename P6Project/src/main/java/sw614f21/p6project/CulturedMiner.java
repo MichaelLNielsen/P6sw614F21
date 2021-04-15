@@ -138,7 +138,7 @@ public class CulturedMiner  {
     public void RecursivePostfixScan (EndpointSequence endpointSequence, ArrayList<EndpointSequence> projectedDB, ClusterSymbol patternSymbol, int k) {
         k = k + 1;
         for (; k < endpointSequence.Sequence.size(); k++) {
-            if (patternSymbol.SymbolID == endpointSequence.Sequence.get(k).SymbolID && patternSymbol.Start == endpointSequence.Sequence.get(k).Start) {
+            if (patternSymbol.EventID.equals(endpointSequence.Sequence.get(k).EventID) && patternSymbol.Start == endpointSequence.Sequence.get(k).Start) {
                 RecursivePostfixScan(endpointSequence, projectedDB, patternSymbol, k);
                 k++;
                 break;
