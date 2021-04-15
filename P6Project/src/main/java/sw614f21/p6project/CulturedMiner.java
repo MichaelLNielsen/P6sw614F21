@@ -21,7 +21,7 @@ public class CulturedMiner  {
         ArrayList<ClusterSymbol> FE = GetFrequentStartingEndpoints(OriginalDatabase, minSupport);
         
         for (int i = 0; i < FE.size(); i++){
-            ClusterSymbol symbol = new ClusterSymbol(FE.get(i).SymbolID, FE.get(i).Start, FE.get(i).Mean, FE.get(i).Deviation);
+            ClusterSymbol symbol = new ClusterSymbol(FE.get(i).EventID, FE.get(i).Start, FE.get(i).Mean, FE.get(i).Deviation);
             ArrayList<EndpointSequence> projectedDB = GetProjectedDB(OriginalDatabase, symbol);
 
 
@@ -37,7 +37,7 @@ public class CulturedMiner  {
     
     public ArrayList<ClusterSymbol> GetFrequentStartingEndpoints (ArrayList<EndpointSequence> endpointDB, int minSupport) {
 
-        HashMap<EventType, ArrayList<Integer>> symbolCounter = new HashMap<EventType, ArrayList<Integer>>();
+        HashMap<String, ArrayList<Integer>> symbolCounter = new HashMap<String, ArrayList<Integer>>();
         // the list contains all the timestamps for each symbol.
         
         ArrayList<ClusterSymbol> resultList = new ArrayList<ClusterSymbol>();
@@ -51,9 +51,9 @@ public class CulturedMiner  {
                 Endpoint endpoint = sequence.get(j);
 
                 if (endpoint.Start) {
-                    ArrayList<Integer> symboldata = symbolCounter.getOrDefault(endpoint.SymbolID, new ArrayList<Integer>());
+                    ArrayList<Integer> symboldata = symbolCounter.getOrDefault(endpoint.EventID, new ArrayList<Integer>());
                     symboldata.add(endpoint.Timestamp);
-                    symbolCounter.put(endpoint.SymbolID, symboldata);
+                    symbolCounter.put(endpoint.EventID, symboldata);
                 }
             }
 
@@ -69,7 +69,7 @@ public class CulturedMiner  {
             for (int j = 0; j < sequence.size(); j++) {
                 Endpoint endpoint = sequence.get(j);
 
-                if (symbolCounter.get(endpoint.SymbolID).size() < minSupport) {
+                if (symbolCounter.get(endpoint.EventID).size() < minSupport) {
                     endpointsToBeRemoved.add(endpoint);
                 }
             }
@@ -82,10 +82,10 @@ public class CulturedMiner  {
         endpointDB.removeAll(sequencesToBeRemoved);
 
 
-        ArrayList<EventType> keys = new ArrayList<EventType>(symbolCounter.keySet());
+        ArrayList<String> keys = new ArrayList<String>(symbolCounter.keySet());
 
         for (int i = 0; i < keys.size(); i++) {
-            EventType type = keys.get(i);
+            String type = keys.get(i);
             ArrayList<Integer> symbolData = symbolCounter.get(type);
             
             if (symbolData.size() >= minSupport) {
@@ -121,7 +121,7 @@ public class CulturedMiner  {
             //skip ahead to the last symbol in the pattern.
             int k = 0;
             for (; k < endpointSequence.Sequence.size(); k++) {
-                if (patternSymbol.SymbolID == endpointSequence.Sequence.get(k).SymbolID && patternSymbol.Start == endpointSequence.Sequence.get(k).Start){
+                if (patternSymbol.EventID.equals(endpointSequence.Sequence.get(k).EventID) && patternSymbol.Start == endpointSequence.Sequence.get(k).Start){
                     RecursivePostfixScan(endpointSequence, projectedDB, patternSymbol, k);
                     k++;
                     break;
@@ -155,7 +155,7 @@ public class CulturedMiner  {
         for (; position < endpointSequence.Sequence.size(); position++){
 
             Endpoint oldEndpoint = endpointSequence.Sequence.get(position);
-            Endpoint endpointCopy = new Endpoint(oldEndpoint.SymbolID, oldEndpoint.Timestamp - timestamp, oldEndpoint.Start, oldEndpoint.OccurrenceID);
+            Endpoint endpointCopy = new Endpoint(oldEndpoint.EventID, oldEndpoint.Timestamp - timestamp, oldEndpoint.Start, oldEndpoint.OccurrenceID);
             if (endpointCopy.Timestamp > TimeThreshold){
                 break;
             }
@@ -201,7 +201,7 @@ public class CulturedMiner  {
             EndpointSequence sequence = database.get(i);
 
             for (int j = 0; j < sequence.Sequence.size(); j++){
-                ClusterSymbol CS = new ClusterSymbol(sequence.Sequence.get(j).SymbolID, sequence.Sequence.get(j).Start);
+                ClusterSymbol CS = new ClusterSymbol(sequence.Sequence.get(j).EventID, sequence.Sequence.get(j).Start);
 
                 int position = symbolCounter.indexOf(CS);
 
@@ -236,7 +236,7 @@ public class CulturedMiner  {
     private boolean IsInAlpha(ClusterPattern alpha, ClusterSymbol CS){
         for (int i = 0; i < alpha.Pattern.size(); i++){
             ClusterSymbol alphaSymbol = alpha.Pattern.get(i);
-            if (alphaSymbol.SymbolID == CS.SymbolID && alphaSymbol.Start && CS.Start == false ){
+            if (alphaSymbol.EventID.equals(CS.EventID) && alphaSymbol.Start && CS.Start == false ){
                 return true;
             }
         }
@@ -271,10 +271,10 @@ public class CulturedMiner  {
                 boolean hasPartner = false;
                 //check the rest of the pattern to see if the starting symbol has a matching finishing symbol.
                 for (int j = 1; j < tempAlpha.size(); j++){
-                    if (symbol.SymbolID == tempAlpha.get(j).SymbolID && tempAlpha.get(j).Start){
+                    if (symbol.EventID.equals(tempAlpha.get(j).EventID) && tempAlpha.get(j).Start){
                         return false;
                     }
-                    if (symbol.SymbolID == tempAlpha.get(j).SymbolID && !tempAlpha.get(j).Start){
+                    if (symbol.EventID.equals(tempAlpha.get(j).EventID) && !tempAlpha.get(j).Start){
                         hasPartner = true;
 
                         tempAlpha.remove(tempAlpha.get(j));
@@ -308,12 +308,12 @@ public class CulturedMiner  {
                 if (sequence.get(j).Start == false){
 
                     for (int k = j; k >= 0; k--){
-                        if (sequence.get(k).Start == true && sequence.get(j).SymbolID == sequence.get(k).SymbolID && sequence.get(j).OccurrenceID == sequence.get(k).OccurrenceID){
+                        if (sequence.get(k).Start == true && sequence.get(j).EventID.equals(sequence.get(k).EventID) && sequence.get(j).OccurrenceID == sequence.get(k).OccurrenceID){
                             correspondingEndpoint = true;
                         }
                     }
                     if (correspondingEndpoint == false){
-                        ClusterSymbol CS = new ClusterSymbol(sequence.get(j).SymbolID, sequence.get(j).Start);
+                        ClusterSymbol CS = new ClusterSymbol(sequence.get(j).EventID, sequence.get(j).Start);
                         correspondingEndpoint = IsInAlpha(alpha, CS);
                     }
                     if (correspondingEndpoint == false){
@@ -336,7 +336,7 @@ public class CulturedMiner  {
             //skip ahead to the last symbol in the pattern.
             int k = 0;
             for (; k < endpointSequence.Sequence.size(); k++) {
-                if (clusterSymbol.SymbolID == endpointSequence.Sequence.get(k).SymbolID && clusterSymbol.Start == endpointSequence.Sequence.get(k).Start){
+                if (clusterSymbol.EventID.equals(endpointSequence.Sequence.get(k).EventID) && clusterSymbol.Start == endpointSequence.Sequence.get(k).Start){
                     k++;
                     break;
                 }
@@ -434,7 +434,7 @@ public class CulturedMiner  {
         leftmostElements.add(elements.size());
 
         for (int i = 0; i < leftmostElements.size() - 1; i++) {
-            ClusterSymbol newCluster = new ClusterSymbol(symbol.SymbolID, symbol.Start);
+            ClusterSymbol newCluster = new ClusterSymbol(symbol.EventID, symbol.Start);
             newCluster.ClusterElements = new ArrayList<ClusterElement>();
 
             for (int j = leftmostElements.get(i); j < leftmostElements.get(i + 1); j++){
