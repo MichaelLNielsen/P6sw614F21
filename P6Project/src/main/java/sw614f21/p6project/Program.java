@@ -14,7 +14,7 @@ public class Program {
 //          Random Commentar
         System.out.println(patterns.size());
         for (int i = 0; i < patterns.size(); i++){
-           System.out.println("Pattern = " + patterns.get(i).TPattern );
+           System.out.println("Pattern = " + patterns.get(i));
         }
 
 //        ArrayList<OccurrenceSequence> output = CSVReader.GetBenchmarkSequences();
