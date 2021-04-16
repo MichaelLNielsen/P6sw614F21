@@ -154,4 +154,18 @@ public class CSVReader {
         }
         return output;
     }
+
+    public static void FormTuples (ArrayList<EndpointSequence> inputSequences) {
+
+        for (int i = 0; i < inputSequences.size(); i++) {
+            ArrayList<Endpoint> es = inputSequences.get(i).Sequence;
+            for (int j = 1; j < es.size(); j++) {
+                int k = j - 1;
+                while (k >= 0 && es.get(k).Timestamp == es.get(j).Timestamp){
+                    es.get(j).TupleMembers.add(es.get(k));
+                    k--;
+                }
+            }
+        }
+    }
 }

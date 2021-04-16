@@ -5,21 +5,25 @@ import java.util.Objects;
 public class PatternSymbol extends Symbol {
 
     public boolean Start;
+    public boolean SameTimeAsPrevious;
+    public String PreviousSymbol;
 
     public PatternSymbol(String symbolID, boolean start) {
         EventID = symbolID;
         Start = start;
+        SameTimeAsPrevious = false;
     }
+
 
     @Override
     public String toString() {
-        return EventID.concat((Start ? "+" : "-"));
+        return EventID.concat((Start ? "+" : "-")) + SameTimeAsPrevious;
     }
 
 
     @Override
     public int hashCode(){
-        return Objects.hash(EventID, Start);
+        return Objects.hash(EventID, Start, SameTimeAsPrevious);
     }
 
     @Override
@@ -27,6 +31,6 @@ public class PatternSymbol extends Symbol {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PatternSymbol that = (PatternSymbol) o;
-        return Start == that.Start && EventID.equals(that.EventID);
+        return Start == that.Start && EventID.equals(that.EventID) && SameTimeAsPrevious == that.SameTimeAsPrevious;
     }
 }

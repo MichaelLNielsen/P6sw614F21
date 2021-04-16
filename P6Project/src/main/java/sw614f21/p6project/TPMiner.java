@@ -1,6 +1,7 @@
 package sw614f21.p6project;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -19,7 +20,14 @@ public class TPMiner {
         
         FakeDataSet FS = new FakeDataSet();
         OriginalDatabase = FS.GetFakeData();
-        
+        CSVReader.FormTuples(OriginalDatabase);
+
+//        for (EndpointSequence es : OriginalDatabase) {
+//            for (Endpoint ep : es.Sequence) {
+//                System.out.println("Endpoint: " + ep);
+//                System.out.println("TupleMembers" + ep.TupleMembers);
+//            }
+//        }
         
         // Find all frequent endpoints, and remove infrequent endpoints in DB.
         ArrayList<PatternSymbol> FE = GetFrequentStartingEndpoints (OriginalDatabase, minSupport);
@@ -104,24 +112,35 @@ public class TPMiner {
 
         // iterate through each sequence, to project them.
         for (int i = 0; i < inputDB.size(); i++) {
-            EndpointSequence endpointSequence = inputDB.get(i);
+            EndpointSequence ES = inputDB.get(i);
             
             //skip ahead to the last symbol in the pattern.
             int k = 0;
-            for (; k < endpointSequence.Sequence.size(); k++) {
-                if (patternSymbol.EventID.equals(endpointSequence.Sequence.get(k).EventID) && patternSymbol.Start == endpointSequence.Sequence.get(k).Start){
-                    if (first){
-                        RecursivePostfixScan(endpointSequence, projectedDB, patternSymbol, k);
+            for (; k < ES.Sequence.size(); k++) {
+                if (patternSymbol.EventID.equals(ES.Sequence.get(k).EventID) && patternSymbol.Start == ES.Sequence.get(k).Start) {
+                    boolean found = false;
+
+                    if (patternSymbol.SameTimeAsPrevious){
+                        for (int l = 0; l < ES.Sequence.get(k).TupleMembers.size(); l++) {
+                            if (ES.Sequence.get(k).TupleMembers.get(l).EventID == patternSymbol.PreviousSymbol) {
+                                found = true;
+                            }
+                        }
                     }
-                    k++;
-                    break;
+                    if (!patternSymbol.SameTimeAsPrevious || found) {
+                        if (first) {
+                            RecursivePostfixScan(ES, projectedDB, patternSymbol, k);
+                        }
+                        k++;
+                        break;
+                    }
                 }
             }
             
             // add the postfix sequences to a new sequence and add it to the output.
             EndpointSequence newEndpointSequence = new EndpointSequence(DBSequenceID++, new ArrayList<Endpoint>());
-            for (; k < endpointSequence.Sequence.size(); k++){
-                newEndpointSequence.Sequence.add(endpointSequence.Sequence.get(k));
+            for (; k < ES.Sequence.size(); k++){
+                newEndpointSequence.Sequence.add(ES.Sequence.get(k));
             }
             if (!newEndpointSequence.Sequence.isEmpty()){
                 projectedDB.add(newEndpointSequence);
@@ -151,16 +170,15 @@ public class TPMiner {
     }
 
 
-    public void TPSpan(TemporalPattern alpha, ArrayList<EndpointSequence> database, int minSupport){
+    public void TPSpan (TemporalPattern alpha, ArrayList<EndpointSequence> database, int minSupport){
         ArrayList<PatternSymbol> FE = new ArrayList<PatternSymbol>();
         FE = CountSupport(alpha, database, minSupport);
         FE = PointPruning(FE, alpha);
-        for (int i = 0; i< FE.size(); i++){
+        for (int i = 0; i< FE.size(); i++) {
             TemporalPattern alphaPrime = new TemporalPattern(new ArrayList<PatternSymbol>(alpha.TPattern));
             alphaPrime.TPattern.add(FE.get(i));
             
             if (IsTemporalPattern(alphaPrime)){
-                TemporalPattern newPattern = new TemporalPattern(new ArrayList<PatternSymbol>(alphaPrime.TPattern));
                 TP.add(alphaPrime);
             }
             
@@ -176,14 +194,24 @@ public class TPMiner {
     public ArrayList<PatternSymbol> CountSupport(TemporalPattern alpha, ArrayList<EndpointSequence> database, int minSupport){
         
         HashMap<PatternSymbol, Integer> symbolCounter = new HashMap<PatternSymbol, Integer>();
-        
+        String lastSymbol = alpha.TPattern.get(alpha.TPattern.size() - 1).EventID;
         ArrayList<PatternSymbol> output = new ArrayList<PatternSymbol>();
         
         for (int i = 0; i < database.size(); i++){
-            EndpointSequence sequence = database.get(i);
+            ArrayList<Endpoint> sequence = database.get(i).Sequence;
             
-            for (int j = 0; j < sequence.Sequence.size(); j++){
-                PatternSymbol PS = new PatternSymbol(sequence.Sequence.get(j).EventID, sequence.Sequence.get(j).Start);
+            for (int j = 0; j < sequence.size(); j++){
+                Endpoint ep = sequence.get(j);
+
+                PatternSymbol PS = new PatternSymbol(ep.EventID, ep.Start);
+
+                for (int k = 0; k < ep.TupleMembers.size(); k++) {
+                    if (ep.TupleMembers.get(k).EventID == lastSymbol) {
+                        PS.SameTimeAsPrevious = true;
+                        PS.PreviousSymbol = lastSymbol;
+                        break;
+                    }
+                }
 
                 int count = symbolCounter.getOrDefault(PS, 0);
                 symbolCounter.put(PS, count + 1);
@@ -206,7 +234,7 @@ public class TPMiner {
 
         return output;
     }
-    
+
     private boolean IsInAlpha(TemporalPattern alpha, PatternSymbol PS){
         for (int i = 0; i < alpha.TPattern.size(); i++){
             PatternSymbol alphaSymbol = alpha.TPattern.get(i);
@@ -278,20 +306,20 @@ public class TPMiner {
             
             ArrayList<Endpoint> sequence = projectedDatabase.get(i).Sequence;
             ArrayList<Endpoint> pruneList = new ArrayList<Endpoint>();
-            for (int j = sequence.size()-1; j >= 0; j--){
+            for (int j = sequence.size() - 1; j >= 0; j--) {
                 boolean correspondingEndpoint = false;
-                if (sequence.get(j).Start == false){
+                if (sequence.get(j).Start == false) {
 
-                    for (int k = j; k >= 0; k--){
+                    for (int k = j; k >= 0; k--) {
                         if (sequence.get(k).Start == true && sequence.get(j).EventID.equals(sequence.get(k).EventID) && sequence.get(j).OccurrenceID == sequence.get(k).OccurrenceID){
                             correspondingEndpoint = true;
                         }
                     }
-                    if (correspondingEndpoint == false){
+                    if (correspondingEndpoint == false) {
                         PatternSymbol PS = new PatternSymbol(sequence.get(j).EventID, sequence.get(j).Start);
                         correspondingEndpoint = IsInAlpha(alpha, PS);
                     }
-                    if (correspondingEndpoint == false){
+                    if (correspondingEndpoint == false) {
                         pruneList.add(sequence.get(j));
                     }
                 }

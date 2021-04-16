@@ -1,10 +1,13 @@
 package sw614f21.p6project;
 
+import java.util.ArrayList;
+
 public class Endpoint extends Symbol implements Comparable<Endpoint>{
     public Integer Timestamp;
     public Integer OccurrenceID;
     public boolean Start;
-    
+    public ArrayList<Endpoint> TupleMembers = new ArrayList<>();
+
     public Endpoint (String symbol, int timestamp, boolean start, int occurrenceID){
         EventID = symbol;
         Timestamp = timestamp;
