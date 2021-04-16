@@ -17,7 +17,7 @@ public class PatternSymbol extends Symbol {
 
     @Override
     public String toString() {
-        return EventID.concat((Start ? "+" : "-")) + SameTimeAsPrevious;
+        return EventID.concat((Start ? "+" : "-"));
     }
 
 
