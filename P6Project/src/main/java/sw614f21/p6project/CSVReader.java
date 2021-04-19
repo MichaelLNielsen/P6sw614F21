@@ -9,6 +9,61 @@ public class CSVReader {
 
         ArrayList<OccurrenceSequence> output = new ArrayList<OccurrenceSequence>();
         HashMap<Integer, OccurrenceSequence> SequenceDays = new HashMap<>();
+        ArrayList<ArrayList<String>> houses = new ArrayList<>();
+        houses.add(GetHouse1Files());
+        houses.add(GetHouse2Files());
+        
+        for (int m = 0; m < houses.size(); m++){
+            ArrayList<String> events = houses.get(m);
+        
+            for (int i = 0; i < events.size(); i++) {
+
+                BufferedReader csvReader = new BufferedReader(new FileReader("resources/ukdale/" + events.get(i) + ".csv"));
+                String row;
+                String symbol = events.get(i);
+                SymbolOccurrence activeEvent = null;
+                Date startDate = null;
+
+                while ((row = csvReader.readLine()) != null) {
+
+                    String[] data = row.split(",");
+
+                    //HOURS SHOULD PROBABLY BE SECONDS
+                    Date date = new Date((int) Math.floor(Integer.parseInt(data[0]) / 86400), Integer.parseInt(data[0]) % 86400);
+                    if (!SequenceDays.containsKey(date.Days)) {
+                        OccurrenceSequence daySequence = new OccurrenceSequence(date.Days, new ArrayList<SymbolOccurrence>());
+                        SequenceDays.put(date.Days, daySequence);
+                    }
+
+                    int value = Integer.parseInt(data[1]);
+                    boolean overThreshold = value > 0;
+
+                    if (overThreshold && activeEvent == null) {
+                        startDate = date;
+                        activeEvent = new SymbolOccurrence(symbol, date.TimeStamp);
+                    } else if (!overThreshold && activeEvent != null) {
+                        activeEvent.FinishingTime = 86400 * (date.Days - startDate.Days) + date.TimeStamp;
+                        SequenceDays.get(startDate.Days).Sequence.add(activeEvent);
+                        activeEvent = null;
+                        startDate = null;
+                    }
+                }
+
+                csvReader.close();
+            }
+
+            ArrayList<Integer> keyset = new ArrayList<Integer>(SequenceDays.keySet());
+            for (int i = 0; i < keyset.size(); i++) {
+                output.add(SequenceDays.get(keyset.get(i)));
+            }
+            
+            SequenceDays = new HashMap<>();
+        }
+        return output;
+
+    }
+
+    public static ArrayList<String> GetHouse1Files(){
         ArrayList<String> events = new ArrayList<String>();
         events.add("ChildLamp");
         events.add("HairDryer");
@@ -21,52 +76,25 @@ public class CSVReader {
         events.add("CoffeeMachine");
         events.add("Dishwasher");
         events.add("SubwooferLivingRoom");
-
-
-        for (int i = 0; i < events.size(); i++) {
-            
-            BufferedReader csvReader = new BufferedReader(new FileReader("resources/ukdale/" + events.get(i) + ".csv"));
-            String row;
-            String symbol = events.get(i);
-            SymbolOccurrence activeEvent = null;
-            Date startDate = null;
-
-            while ((row = csvReader.readLine()) != null) {
-
-                String[] data = row.split(",");
-
-                //HOURS SHOULD PROBABLY BE SECONDS
-                Date date = new Date((int) Math.floor(Integer.parseInt(data[0]) / 86400), Integer.parseInt(data[0]) % 86400);
-                if (!SequenceDays.containsKey(date.Days)) {
-                    OccurrenceSequence daySequence = new OccurrenceSequence(date.Days, new ArrayList<SymbolOccurrence>());
-                    SequenceDays.put(date.Days, daySequence);
-                }
-
-                int value = Integer.parseInt(data[1]);
-                boolean overThreshold = value > 0;
-
-                if (overThreshold && activeEvent == null) {
-                    startDate = date;
-                    activeEvent = new SymbolOccurrence(symbol, date.TimeStamp);
-                } else if (!overThreshold && activeEvent != null) {
-                    activeEvent.FinishingTime = 86400 * (date.Days - startDate.Days) + date.TimeStamp;
-                    SequenceDays.get(startDate.Days).Sequence.add(activeEvent);
-                    activeEvent = null;
-                    startDate = null;
-                }
-            }
-
-            csvReader.close();
-        }
-
-        ArrayList<Integer> keyset = new ArrayList<Integer>(SequenceDays.keySet());
-        for (int i = 0; i < keyset.size(); i++) {
-            output.add(SequenceDays.get(keyset.get(i)));
-        }
-        return output;
-
+        return events;
     }
-
+    public static ArrayList<String> GetHouse2Files(){ 
+        ArrayList<String> events = new ArrayList<String>();
+        events.add("ChildLamp");
+        events.add("HairDryer");
+        events.add("Kettle");
+        events.add("KitchenLamp");
+        events.add("LEDPrinter");
+        events.add("LivingRoomLampTv");
+        events.add("Microwave");
+        events.add("TVdata");
+        events.add("CoffeeMachine");
+        events.add("Dishwasher");
+        events.add("SubwooferLivingRoom");
+        return events;
+    }
+    
+    
     public static ArrayList<OccurrenceSequence> GetOccurrenceSequences() throws IOException {
 
         ArrayList<OccurrenceSequence> output = new ArrayList<OccurrenceSequence>();
