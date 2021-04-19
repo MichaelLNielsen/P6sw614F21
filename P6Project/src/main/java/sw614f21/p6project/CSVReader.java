@@ -81,7 +81,6 @@ public class CSVReader {
     public static ArrayList<String> GetHouse2Files(){ 
         ArrayList<String> events = new ArrayList<String>();
         events.add("KettleHus2");
-        events.add("LaptopHus2");
         events.add("MonitorHus2");
         events.add("RiceCookerHus2");
         events.add("RunningMachineHus2");
