@@ -15,7 +15,7 @@ public class CSVReader {
         
         for (int m = 0; m < houses.size(); m++){
             ArrayList<String> events = houses.get(m);
-        
+            
             for (int i = 0; i < events.size(); i++) {
 
                 BufferedReader csvReader = new BufferedReader(new FileReader("resources/ukdale/" + events.get(i) + ".csv"));
@@ -80,17 +80,16 @@ public class CSVReader {
     }
     public static ArrayList<String> GetHouse2Files(){ 
         ArrayList<String> events = new ArrayList<String>();
-        events.add("ChildLamp");
-        events.add("HairDryer");
-        events.add("Kettle");
-        events.add("KitchenLamp");
-        events.add("LEDPrinter");
-        events.add("LivingRoomLampTv");
-        events.add("Microwave");
-        events.add("TVdata");
-        events.add("CoffeeMachine");
-        events.add("Dishwasher");
-        events.add("SubwooferLivingRoom");
+        events.add("KettleHus2");
+        events.add("LaptopHus2");
+        events.add("MonitorHus2");
+        events.add("RiceCookerHus2");
+        events.add("RouterHus2");
+        events.add("RunningMachineHus2");
+        events.add("ServerHDDHus2");
+        events.add("ServerHus2");
+        events.add("SpeakersHus2");
+        events.add("WashingMachineHus2");
         return events;
     }
     
