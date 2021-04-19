@@ -14,12 +14,13 @@ public class TPMiner {
     public ArrayList<TemporalPattern> TPMine (int minSupport) throws IOException {
 
         //ArrayList<OccurrenceSequence> occurrenceDB = CSVReader.GetOccurrenceSequences();
-        //OriginalDatabase = CSVReader.GetEndpointSequences(occurrenceDB);
+        ArrayList<OccurrenceSequence> occurrenceDB = CSVReader.GetBenchmarkSequences();
+        OriginalDatabase = CSVReader.GetEndpointSequences(occurrenceDB);
 
         //Fake dataset:
         
-        FakeDataSet FS = new FakeDataSet();
-        OriginalDatabase = FS.GetFakeData();
+        //FakeDataSet FS = new FakeDataSet();
+        //OriginalDatabase = FS.GetFakeData();
         CSVReader.FormTuples(OriginalDatabase);
 
 //        for (EndpointSequence es : OriginalDatabase) {
