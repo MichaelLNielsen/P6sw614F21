@@ -84,11 +84,11 @@ public class CSVReader {
         events.add("LaptopHus2");
         events.add("MonitorHus2");
         events.add("RiceCookerHus2");
-        events.add("RouterHus2");
         events.add("RunningMachineHus2");
-        events.add("ServerHDDHus2");
-        events.add("ServerHus2");
         events.add("SpeakersHus2");
+        events.add("ToasterHus2");
+        events.add("MicrowaveHus2");
+        events.add("PlaystationHus2");
         events.add("WashingMachineHus2");
         return events;
     }
