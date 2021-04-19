@@ -10,7 +10,7 @@ public class Program {
 //        CulturedMiner cultMiner = new CulturedMiner();
 //
 //        ArrayList<ClusterPattern> patterns = cultMiner.CultureMine(1400, 86400, 800);
-        ArrayList<TemporalPattern> patterns = tpMiner.TPMine(2800);
+        ArrayList<TemporalPattern> patterns = tpMiner.TPMine(1400);
 //          Random Commentar
         System.out.println(patterns.size());
         for (int i = 0; i < patterns.size(); i++){
