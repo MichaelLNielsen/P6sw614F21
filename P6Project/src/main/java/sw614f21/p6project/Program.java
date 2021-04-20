@@ -7,20 +7,30 @@ public class Program {
     public static void main(String[] args) throws IOException{
     
         
-        ArrayList<OccurrenceSequence> sequences = CSVReader.GetBenchmarkSequences();
-        PrintDataStatistics(sequences);
+        System.out.println("Total memory = " + Runtime.getRuntime().totalMemory());
+        System.out.println("Free memory = " + Runtime.getRuntime().freeMemory() + "\n\n");
         
-//        TPMiner tpMiner = new TPMiner();
+        
+        ArrayList<OccurrenceSequence> sequences = CSVReader.GetBenchmarkSequences();
+        //PrintDataStatistics(sequences);
+        
+        System.out.println("Total memory = " + Runtime.getRuntime().totalMemory());
+        System.out.println("Free memory = " + Runtime.getRuntime().freeMemory()+ "\n\n");
+        
+        TPMiner tpMiner = new TPMiner();
 //        CulturedMiner cultMiner = new CulturedMiner();
 //
 //        ArrayList<ClusterPattern> patterns = cultMiner.CultureMine(1400, 86400, 800);
-//        ArrayList<TemporalPattern> patterns = tpMiner.TPMine(1400);
+        ArrayList<TemporalPattern> patterns = tpMiner.TPMine(1400);
 //          Random Commentar
-//        System.out.println(patterns.size());
-//        for (int i = 0; i < patterns.size(); i++){
-//           System.out.println("Pattern = " + patterns.get(i));
-//        }
+        //System.out.println(patterns.size());
+        //for (int i = 0; i < patterns.size(); i++){
+        //   System.out.println("Pattern = " + patterns.get(i));
+        //}
 
+        System.out.println("Total memory = " + Runtime.getRuntime().totalMemory());
+        System.out.println("Free memory = " + Runtime.getRuntime().freeMemory()+ "\n\n");
+        
 //        ArrayList<OccurrenceSequence> output = CSVReader.GetBenchmarkSequences();
 //        ArrayList<EndpointSequence> endpointsequences = CSVReader.GetEndpointSequences(output);
 //        for (EndpointSequence seq : endpointsequences) {
