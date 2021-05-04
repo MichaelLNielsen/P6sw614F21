@@ -1,7 +1,11 @@
 package sw614f21.p6project;
+import sw614f21.p6project.CODMiner.CODMiner;
+import sw614f21.p6project.CODMiner.ClusterPattern;
+import sw614f21.p6project.DataStructures.OccurrenceSequence;
+import sw614f21.p6project.Preprocessing.CSVReader;
+
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class Program {
     public static void main(String[] args) throws IOException{
@@ -17,11 +21,11 @@ public class Program {
         System.out.println("Total memory = " + Runtime.getRuntime().totalMemory());
         System.out.println("Free memory = " + Runtime.getRuntime().freeMemory()+ "\n\n");
         
-        TPMiner tpMiner = new TPMiner();
-//        CulturedMiner cultMiner = new CulturedMiner();
+//        TPMiner tpMiner = new TPMiner();
+        CODMiner cultMiner = new CODMiner();
 //
-//        ArrayList<ClusterPattern> patterns = cultMiner.CultureMine(1400, 86400, 800);
-        ArrayList<TemporalPattern> patterns = tpMiner.TPMine(1400);
+        ArrayList<ClusterPattern> patterns = cultMiner.CODMiner(1400, 86400, 800);
+//        ArrayList<TemporalPattern> patterns = tpMiner.TPMiner(1400);
 //          Random Commentar
         //System.out.println(patterns.size());
         //for (int i = 0; i < patterns.size(); i++){

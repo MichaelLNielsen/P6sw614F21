@@ -1,7 +1,11 @@
-package sw614f21.p6project;
+package sw614f21.p6project.TPMiner;
+
+import sw614f21.p6project.DataStructures.Endpoint;
+import sw614f21.p6project.DataStructures.EndpointSequence;
+import sw614f21.p6project.DataStructures.OccurrenceSequence;
+import sw614f21.p6project.Preprocessing.CSVReader;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -12,7 +16,7 @@ public class TPMiner {
     // Local variable for giving projected database sequences unique IDs.
     public int DBSequenceID = 0;
 
-    public ArrayList<TemporalPattern> TPMine (int minSupport) throws IOException {
+    public ArrayList<TemporalPattern> TPMiner(int minSupport) throws IOException {
 
         // Loading data from the CSV file and converting them to endpoint sequences:
         // ArrayList<OccurrenceSequence> occurrenceDB = CSVReader.GetOccurrenceSequences();

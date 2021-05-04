@@ -1,4 +1,6 @@
-package sw614f21.p6project;
+package sw614f21.p6project.TPMiner;
+
+import sw614f21.p6project.DataStructures.Symbol;
 
 import java.util.Objects;
 

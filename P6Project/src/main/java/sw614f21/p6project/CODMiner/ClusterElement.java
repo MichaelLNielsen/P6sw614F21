@@ -1,4 +1,6 @@
-package sw614f21.p6project;
+package sw614f21.p6project.CODMiner;
+
+import sw614f21.p6project.DataStructures.EndpointSequence;
 
 public class ClusterElement implements Comparable<ClusterElement> {
     public int TimeStamp;
