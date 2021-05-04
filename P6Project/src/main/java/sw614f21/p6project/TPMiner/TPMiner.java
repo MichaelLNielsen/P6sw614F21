@@ -4,6 +4,7 @@ import sw614f21.p6project.DataStructures.Endpoint;
 import sw614f21.p6project.DataStructures.EndpointSequence;
 import sw614f21.p6project.DataStructures.OccurrenceSequence;
 import sw614f21.p6project.Preprocessing.CSVReader;
+import sw614f21.p6project.Preprocessing.FakeDataSet2;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,10 +21,10 @@ public class TPMiner {
 
         // Loading data from the CSV file and converting them to endpoint sequences:
         // ArrayList<OccurrenceSequence> occurrenceDB = CSVReader.GetOccurrenceSequences();
-        ArrayList<OccurrenceSequence> occurrenceDB = CSVReader.GetBenchmarkSequences();
-        OriginalDatabase = CSVReader.GetEndpointSequences(occurrenceDB);
-        // FakeDataSet FS = new FakeDataSet();
-        // OriginalDatabase = FS.GetFakeData();
+//        ArrayList<OccurrenceSequence> occurrenceDB = CSVReader.GetBenchmarkSequences();
+//        OriginalDatabase = CSVReader.GetEndpointSequences(occurrenceDB);
+         FakeDataSet2 FS = new FakeDataSet2();
+         OriginalDatabase = FS.GetFakeData();
 
         // Encode endpoints happening at the same time in the endpoint sequences:
         CSVReader.FormTuples(OriginalDatabase);
@@ -37,6 +38,15 @@ public class TPMiner {
             ArrayList<PatternSymbol> tempInput = new ArrayList<PatternSymbol>();
             tempInput.add(symbol);
             ArrayList<EndpointSequence> projectedDB = GetProjectedDB(OriginalDatabase, symbol, true);
+
+            for (EndpointSequence es : projectedDB) {
+                for (Endpoint e : es.Sequence){
+                    System.out.print(e + ",");
+                }
+                System.out.println("");
+            }
+            System.out.println("");
+
             TemporalPattern temp = new TemporalPattern(tempInput);
             
             TPSpan(temp, projectedDB, minSupport);

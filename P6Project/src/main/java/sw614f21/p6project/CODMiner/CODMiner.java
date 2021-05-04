@@ -4,6 +4,7 @@ import sw614f21.p6project.DataStructures.Endpoint;
 import sw614f21.p6project.DataStructures.EndpointSequence;
 import sw614f21.p6project.DataStructures.OccurrenceSequence;
 import sw614f21.p6project.Preprocessing.CSVReader;
+import sw614f21.p6project.Preprocessing.FakeDataSet2;
 import sw614f21.p6project.TPMiner.PatternSymbol;
 
 import java.util.ArrayList;
@@ -19,8 +20,10 @@ public class CODMiner {
     public ArrayList<ClusterPattern> CODMiner(int minSupport, double maxClusterDeviation, int timeThreshold) throws IOException{
         //FakeDataSet FDS = new FakeDataSet();
         //ArrayList<EndpointSequence> OriginalDatabase = FDS.GetFakeData();
-        ArrayList<OccurrenceSequence> occurrenceDB = CSVReader.GetOccurrenceSequences();
-        ArrayList<EndpointSequence> OriginalDatabase = CSVReader.GetEndpointSequences(occurrenceDB);
+        FakeDataSet2 FDS = new FakeDataSet2();
+        ArrayList<EndpointSequence> OriginalDatabase = FDS.GetFakeData();
+//        ArrayList<OccurrenceSequence> occurrenceDB = CSVReader.GetOccurrenceSequences();
+//        ArrayList<EndpointSequence> OriginalDatabase = CSVReader.GetEndpointSequences(occurrenceDB);
 
         // Get endpoint sequences from the CSV files.
 //        ArrayList<OccurrenceSequence> occurrenceDB = CSVReader.GetBenchmarkSequences();
@@ -35,6 +38,14 @@ public class CODMiner {
         for (int i = 0; i < FE.size(); i++){
             ClusterSymbol symbol = new ClusterSymbol(FE.get(i).EventID, FE.get(i).Start, FE.get(i).Mean, FE.get(i).Deviation);
             ArrayList<EndpointSequence> projectedDB = GetProjectedDB(OriginalDatabase, symbol);
+
+            for (EndpointSequence es : projectedDB) {
+                for (Endpoint e : es.Sequence){
+                    System.out.print(e + ",");
+                }
+                System.out.println("");
+            }
+            System.out.println("");
 
             ClusterPattern temp = new ClusterPattern();
             temp.Pattern.add(symbol);

@@ -3,44 +3,31 @@ import sw614f21.p6project.CODMiner.CODMiner;
 import sw614f21.p6project.CODMiner.ClusterPattern;
 import sw614f21.p6project.DataStructures.OccurrenceSequence;
 import sw614f21.p6project.Preprocessing.CSVReader;
+import sw614f21.p6project.TPMiner.TPMiner;
+import sw614f21.p6project.TPMiner.TemporalPattern;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class Program {
     public static void main(String[] args) throws IOException{
-    
-        
-        System.out.println("Total memory = " + Runtime.getRuntime().totalMemory());
-        System.out.println("Free memory = " + Runtime.getRuntime().freeMemory() + "\n\n");
-        
-        
-        ArrayList<OccurrenceSequence> sequences = CSVReader.GetBenchmarkSequences();
-        //PrintDataStatistics(sequences);
-        
-        System.out.println("Total memory = " + Runtime.getRuntime().totalMemory());
-        System.out.println("Free memory = " + Runtime.getRuntime().freeMemory()+ "\n\n");
-        
-//        TPMiner tpMiner = new TPMiner();
-        CODMiner cultMiner = new CODMiner();
-//
-        ArrayList<ClusterPattern> patterns = cultMiner.CODMiner(1400, 86400, 800);
-//        ArrayList<TemporalPattern> patterns = tpMiner.TPMiner(1400);
-//          Random Commentar
-        //System.out.println(patterns.size());
-        //for (int i = 0; i < patterns.size(); i++){
-        //   System.out.println("Pattern = " + patterns.get(i));
-        //}
 
-        System.out.println("Total memory = " + Runtime.getRuntime().totalMemory());
-        System.out.println("Free memory = " + Runtime.getRuntime().freeMemory()+ "\n\n");
-        
-//        ArrayList<OccurrenceSequence> output = CSVReader.GetBenchmarkSequences();
-//        ArrayList<EndpointSequence> endpointsequences = CSVReader.GetEndpointSequences(output);
-//        for (EndpointSequence seq : endpointsequences) {
-//            System.out.println(seq.Sequence);
-//        }
-//        System.out.println("Number of days: " + output.size());
+        CODMiner cultMiner = new CODMiner();
+        ArrayList<ClusterPattern> patterns = cultMiner.CODMiner(2, 8, 800);
+
+        System.out.println("CODMiner:");
+        for (int i = 0; i < patterns.size(); i++){
+           System.out.println("Pattern = " + patterns.get(i).Pattern.toString());
+        }
+
+        TPMiner tpMiner = new TPMiner();
+        ArrayList<TemporalPattern> tpatterns = tpMiner.TPMiner(2);
+
+        System.out.println("TPMiner:");
+        for (int i = 0; i < tpatterns.size(); i++){
+            System.out.println("Pattern = " + tpatterns.get(i).TPattern.toString());
+        }
+
     }
 
 
