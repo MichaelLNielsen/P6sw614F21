@@ -283,8 +283,9 @@ public class TPMiner {
         for (int i = 0; i < alpha.TPattern.size(); i++){
             PatternSymbol alphaSymbol = alpha.TPattern.get(i);
             // 'PS.Start == false' is a sanity check, since this condition is checked before calling.
-            if (alphaSymbol.EventID.equals(PS.EventID) && alphaSymbol.Start && PS.Start == false) {
-                return true;
+            // If the event ID of alphaSymbol matches, then true is returned for a starting endpoint and false otherwise.
+            if (alphaSymbol.EventID.equals(PS.EventID) && PS.Start == false){
+                return alphaSymbol.Start;
             }
         }
         return false;

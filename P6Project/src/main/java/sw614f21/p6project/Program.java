@@ -13,9 +13,9 @@ public class Program {
     public static void main(String[] args) throws IOException{
 
         CODMiner codMiner = new CODMiner();
-        ArrayList<ClusterPattern> patterns = codMiner.CODMiner(2, 8, 800);
+        ArrayList<ClusterPattern> patterns = codMiner.CODMiner(2600, 86400, 86400);
 
-        System.out.println("CODMiner final patterns:");
+        System.out.println("Number of patterns:" + patterns.size());
         for (int i = 0; i < patterns.size(); i++){
            System.out.println("Pattern = " + patterns.get(i).Pattern.toString());
         }
