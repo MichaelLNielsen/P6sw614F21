@@ -177,9 +177,9 @@ public class CODMiner {
             Endpoint oldEndpoint = endpointSequence.Sequence.get(position);
             Endpoint endpointCopy = new Endpoint(oldEndpoint.EventID, oldEndpoint.Timestamp - timestamp, oldEndpoint.Start, oldEndpoint.OccurrenceID);
             // Stop projecting if the current timestamp exceeds the TimeThreshold parameter.
-            if (endpointCopy.Timestamp > TimeThreshold){
-                break;
-            }
+//            if (endpointCopy.Timestamp > TimeThreshold){
+//                break;
+//            }
             newEndpointSequence.Sequence.add(endpointCopy);
         }
         // Only add non-empty sequences to the projected database.
@@ -240,7 +240,7 @@ public class CODMiner {
                 ClusterSymbol CS = new ClusterSymbol(sequence.Sequence.get(j).EventID, sequence.Sequence.get(j).Start);
 
                 int position = symbolCounter.indexOf(CS);
-
+                
                 // If CS is not found (indexOF returns -1), add CS to SymbolCounter.
                 if (position == -1){
                     CS.ClusterElements = new ArrayList<ClusterElement>();
@@ -250,8 +250,16 @@ public class CODMiner {
 
                 // Append information about the cluster element to its corresponding ClusterSymbol in symbolCounter.
                 ClusterElement element = new ClusterElement(sequence.Sequence.get(j).Timestamp, sequence);
-                symbolCounter.get(position).ClusterElements.add(element);
-
+                boolean SequenceInList = false;
+                for (int l = 0; l < symbolCounter.get(position).ClusterElements.size() ; l++){
+                    if (symbolCounter.get(position).ClusterElements.get(l).Sequence == element.Sequence){
+                        SequenceInList = true;
+                    }
+                }
+                if (SequenceInList == false){
+                    symbolCounter.get(position).ClusterElements.add(element);
+                }
+                
                 // Stop scanning through this sequence if a finishing endpoint corresponding to a starting endpoint in alpha is found.
                 if (CS.Start == false){
                     if (IsInAlpha (alpha, CS)){
@@ -398,7 +406,7 @@ public class CODMiner {
             int k = 0;
             for (; k < endpointSequence.Sequence.size(); k++) {
                 Endpoint EP = endpointSequence.Sequence.get(k);
-                if (clusterSymbol.EventID.equals(EP.EventID) && clusterSymbol.ClusterElements.get(i).TimeStamp == EP.Timestamp && clusterSymbol.Start == EP.Start){
+                if (clusterSymbol.EventID.equals(EP.EventID) && clusterSymbol.Start == EP.Start){
                     k++;
                     break;
                 }
