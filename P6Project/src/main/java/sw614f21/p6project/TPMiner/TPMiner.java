@@ -17,14 +17,7 @@ public class TPMiner {
     // Local variable for giving projected database sequences unique IDs.
     public int DBSequenceID = 0;
 
-    public ArrayList<TemporalPattern> TPMiner(int minSupport) throws IOException {
-
-        // Loading data from the CSV file and converting them to endpoint sequences:
-        // ArrayList<OccurrenceSequence> occurrenceDB = CSVReader.GetOccurrenceSequences();
-//        ArrayList<OccurrenceSequence> occurrenceDB = CSVReader.GetBenchmarkSequences();
-//        OriginalDatabase = CSVReader.GetEndpointSequences(occurrenceDB);
-         FakeDataSet2 FS = new FakeDataSet2();
-         OriginalDatabase = FS.GetFakeData();
+    public ArrayList<TemporalPattern> TPMiner(int minSupport, ArrayList<EndpointSequence> OriginalDatabase) throws IOException {
 
         // Encode endpoints happening at the same time in the endpoint sequences:
         CSVReader.FormTuples(OriginalDatabase);
@@ -39,13 +32,6 @@ public class TPMiner {
             tempInput.add(symbol);
             ArrayList<EndpointSequence> projectedDB = GetProjectedDB(OriginalDatabase, symbol, true);
 
-            for (EndpointSequence es : projectedDB) {
-                for (Endpoint e : es.Sequence){
-                    System.out.print(e + ",");
-                }
-                System.out.println("");
-            }
-            System.out.println("");
 
             TemporalPattern temp = new TemporalPattern(tempInput);
             
