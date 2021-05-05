@@ -1,46 +1,39 @@
 package sw614f21.p6project;
-import sw614f21.p6project.CODMiner.CODMiner;
-import sw614f21.p6project.CODMiner.ClusterPattern;
+import sw614f21.p6project.CODMiner.*;
 import sw614f21.p6project.DataStructures.OccurrenceSequence;
 import sw614f21.p6project.Preprocessing.CSVReader;
 
 import java.io.IOException;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import sw614f21.p6project.TPMiner.*;
 
 public class Program {
     public static void main(String[] args) throws IOException{
     
         
-        System.out.println("Total memory = " + Runtime.getRuntime().totalMemory());
-        System.out.println("Free memory = " + Runtime.getRuntime().freeMemory() + "\n\n");
         
         
-        ArrayList<OccurrenceSequence> sequences = CSVReader.GetBenchmarkSequences();
-        //PrintDataStatistics(sequences);
+        TPMiner tpMiner = new TPMiner();
+        CODMiner codMiner = new CODMiner();
+        LocalTime before = LocalTime.now();
+        System.out.println("Start: " + before);
         
-        System.out.println("Total memory = " + Runtime.getRuntime().totalMemory());
-        System.out.println("Free memory = " + Runtime.getRuntime().freeMemory()+ "\n\n");
-        
-//        TPMiner tpMiner = new TPMiner();
-        CODMiner cultMiner = new CODMiner();
-//
-        ArrayList<ClusterPattern> patterns = cultMiner.CODMiner(1400, 86400, 800);
-//        ArrayList<TemporalPattern> patterns = tpMiner.TPMiner(1400);
-//          Random Commentar
-        //System.out.println(patterns.size());
-        //for (int i = 0; i < patterns.size(); i++){
-        //   System.out.println("Pattern = " + patterns.get(i));
-        //}
+//        ArrayList<ClusterPattern> patterns = codMiner.CODMiner(2000, 3600, 86400);
+        ArrayList<TemporalPattern> patterns = tpMiner.TPMiner(2000);
 
-        System.out.println("Total memory = " + Runtime.getRuntime().totalMemory());
-        System.out.println("Free memory = " + Runtime.getRuntime().freeMemory()+ "\n\n");
+        LocalTime after = LocalTime.now();
+        System.out.println("Before: " + before);
+        System.out.println("After: " + after);
+        System.out.println("Span in seconds: " + (after.toSecondOfDay() - before.toSecondOfDay()));
+        System.out.println("Patterns: " + patterns.size());
         
-//        ArrayList<OccurrenceSequence> output = CSVReader.GetBenchmarkSequences();
-//        ArrayList<EndpointSequence> endpointsequences = CSVReader.GetEndpointSequences(output);
-//        for (EndpointSequence seq : endpointsequences) {
-//            System.out.println(seq.Sequence);
-//        }
-//        System.out.println("Number of days: " + output.size());
+        //printing the patterns.
+        for (int i = 0; i < patterns.size(); i++){
+           System.out.println("Pattern = " + patterns.get(i));
+        }
+
+
     }
 
 
