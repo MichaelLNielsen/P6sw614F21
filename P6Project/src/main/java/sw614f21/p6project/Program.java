@@ -20,22 +20,21 @@ public class Program {
         ArrayList<OccurrenceSequence> occurrenceDB = CSVReader.GetBenchmarkSequences();
         ArrayList<EndpointSequence> OriginalDatabase  = CSVReader.GetEndpointSequences(occurrenceDB);
         
-        //mini synthetic data set.
-        //FakeDataSet2 FS = new FakeDataSet2();
-        //ArrayList<EndpointSequence> OriginalDatabase = FS.GetFakeData();
+        // mini synthetic data set.
+        // FakeDataSet2 FS = new FakeDataSet2();
+        // ArrayList<EndpointSequence> OriginalDatabase = FS.GetFakeData();
         
         
         TPMiner tpMiner = new TPMiner();
         //CODMiner codMiner = new CODMiner();
-//
+
         Runtime.getRuntime().gc();
         LocalTime before = LocalTime.now();
         
         System.out.println("Start tidspunkt : " + before);
         ArrayList<TemporalPattern> patterns = tpMiner.TPMiner(1700, OriginalDatabase);
-        //ArrayList<ClusterPattern> patterns = codMiner.CODMiner(5000, 43200, 86400, OriginalDatabase);
+        // ArrayList<ClusterPattern> patterns = codMiner.CODMiner(5000, 43200, 86400, OriginalDatabase);
 
-//          Random Commentar
         int timeSpent = LocalTime.now().toSecondOfDay() - before.toSecondOfDay();
         System.out.println("Before: " + before);
         System.out.println("After: " + LocalTime.now());

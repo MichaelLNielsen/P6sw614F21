@@ -237,15 +237,17 @@ public class CODMiner {
                     symbolCounter.add(CS);
                 }
 
-                // Append information about the cluster element to its corresponding ClusterSymbol in symbolCounter.
+
                 ClusterElement element = new ClusterElement(sequence.Sequence.get(j).Timestamp, sequence);
+                // Each unique endpoint in symbolCounter can only be counted once per sequence.
                 boolean SequenceInList = false;
-                for (int l = 0; l < symbolCounter.get(position).ClusterElements.size() ; l++){
+                for (int l = 0; l < symbolCounter.get(position).ClusterElements.size(); l++){
                     if (symbolCounter.get(position).ClusterElements.get(l).Sequence == element.Sequence){
                         SequenceInList = true;
                     }
                 }
                 if (SequenceInList == false){
+                    // Append information about the cluster element to its corresponding ClusterSymbol in symbolCounter.
                     symbolCounter.get(position).ClusterElements.add(element);
                 }
                 
