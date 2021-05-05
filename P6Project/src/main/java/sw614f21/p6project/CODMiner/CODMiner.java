@@ -39,6 +39,7 @@ public class CODMiner {
             ClusterSymbol symbol = new ClusterSymbol(FE.get(i).EventID, FE.get(i).Start, FE.get(i).Mean, FE.get(i).Deviation);
             ArrayList<EndpointSequence> projectedDB = GetProjectedDB(OriginalDatabase, symbol);
 
+            System.out.println("CODMiner: " + symbol);
             for (EndpointSequence es : projectedDB) {
                 for (Endpoint e : es.Sequence){
                     System.out.print(e + ",");
@@ -224,6 +225,16 @@ public class CODMiner {
             // Project the database further with respect to alpha prime.
             ArrayList<EndpointSequence> projectedDatabase = DBConstruct(database, alphaPrime);
             FE.get(i).ClusterElements = null;
+
+            System.out.print("TPSpan: ");
+            System.out.println(alphaPrime.Pattern);
+            for (EndpointSequence es : projectedDatabase) {
+                for (Endpoint e : es.Sequence){
+                    System.out.print(e + ",");
+                }
+                System.out.println("");
+            }
+            System.out.println("");
             // Look for pattern extensions in the new projected database.
             TPSpan(alphaPrime, projectedDatabase, minSupport, maxClusterDeviation);
         }
@@ -281,11 +292,12 @@ public class CODMiner {
 
     private boolean IsInAlpha(ClusterPattern alpha, ClusterSymbol CS){
         // Check for a corresponding starting endpoint in alpha with the same EventID.
-        for (int i = 0; i < alpha.Pattern.size(); i++){
+        for (int i = alpha.Pattern.size() - 1; i >= 0; i--){
             ClusterSymbol alphaSymbol = alpha.Pattern.get(i);
             // 'PS.Start == false' is a sanity check, since this condition is checked before calling.
-            if (alphaSymbol.EventID.equals(CS.EventID) && alphaSymbol.Start && CS.Start == false ){
-                return true;
+            // If the event ID of alphaSymbol matches, then true is returned for a starting endpoint and false otherwise.
+            if (alphaSymbol.EventID.equals(CS.EventID) && CS.Start == false){
+                return alphaSymbol.Start;
             }
         }
         return false;

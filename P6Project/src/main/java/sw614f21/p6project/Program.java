@@ -12,21 +12,21 @@ import java.util.ArrayList;
 public class Program {
     public static void main(String[] args) throws IOException{
 
-        CODMiner cultMiner = new CODMiner();
-        ArrayList<ClusterPattern> patterns = cultMiner.CODMiner(2, 8, 800);
+        CODMiner codMiner = new CODMiner();
+        ArrayList<ClusterPattern> patterns = codMiner.CODMiner(2, 8, 800);
 
-        System.out.println("CODMiner:");
+        System.out.println("CODMiner final patterns:");
         for (int i = 0; i < patterns.size(); i++){
            System.out.println("Pattern = " + patterns.get(i).Pattern.toString());
         }
 
-        TPMiner tpMiner = new TPMiner();
-        ArrayList<TemporalPattern> tpatterns = tpMiner.TPMiner(2);
-
-        System.out.println("TPMiner:");
-        for (int i = 0; i < tpatterns.size(); i++){
-            System.out.println("Pattern = " + tpatterns.get(i).TPattern.toString());
-        }
+//        TPMiner tpMiner = new TPMiner();
+//        ArrayList<TemporalPattern> tpatterns = tpMiner.TPMiner(2);
+//
+//        System.out.println("TPMiner:");
+//        for (int i = 0; i < tpatterns.size(); i++){
+//            System.out.println("Pattern = " + tpatterns.get(i).TPattern.toString());
+//        }
 
     }
 
