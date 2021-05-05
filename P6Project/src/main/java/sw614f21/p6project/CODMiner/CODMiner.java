@@ -17,18 +17,7 @@ public class CODMiner {
     public int TimeThreshold;
     int DBSequenceID = 0;
 
-    public ArrayList<ClusterPattern> CODMiner(int minSupport, double maxClusterDeviation, int timeThreshold) throws IOException{
-        //FakeDataSet FDS = new FakeDataSet();
-        //ArrayList<EndpointSequence> OriginalDatabase = FDS.GetFakeData();
-//        FakeDataSet2 FDS = new FakeDataSet2();
-//        ArrayList<EndpointSequence> OriginalDatabase = FDS.GetFakeData();
-//        ArrayList<OccurrenceSequence> occurrenceDB = CSVReader.GetOccurrenceSequences();
-//        ArrayList<EndpointSequence> OriginalDatabase = CSVReader.GetEndpointSequences(occurrenceDB);
-
-        // Get endpoint sequences from the CSV files.
-        ArrayList<OccurrenceSequence> occurrenceDB = CSVReader.GetBenchmarkSequences();
-        ArrayList<EndpointSequence> OriginalDatabase = CSVReader.GetEndpointSequences(occurrenceDB);
-
+    public ArrayList<ClusterPattern> CODMiner(int minSupport, double maxClusterDeviation, int timeThreshold, ArrayList<EndpointSequence> OriginalDatabase) throws IOException{
 
         TimeThreshold = timeThreshold;
         // Getting the frequent endpoints.
