@@ -7,28 +7,35 @@ import sw614f21.p6project.TPMiner.TPMiner;
 import sw614f21.p6project.TPMiner.TemporalPattern;
 
 import java.io.IOException;
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 public class Program {
     public static void main(String[] args) throws IOException{
 
+
+        //TPMiner tpMiner = new TPMiner();
         CODMiner codMiner = new CODMiner();
-        ArrayList<ClusterPattern> patterns = codMiner.CODMiner(2600, 86400, 86400);
-
-        System.out.println("Number of patterns:" + patterns.size());
-        for (int i = 0; i < patterns.size(); i++){
-           System.out.println("Pattern = " + patterns.get(i).Pattern.toString());
-        }
-
-//        TPMiner tpMiner = new TPMiner();
-//        ArrayList<TemporalPattern> tpatterns = tpMiner.TPMiner(2);
 //
-//        System.out.println("TPMiner:");
-//        for (int i = 0; i < tpatterns.size(); i++){
-//            System.out.println("Pattern = " + tpatterns.get(i).TPattern.toString());
-//        }
+        Runtime.getRuntime().gc();
+        LocalTime before = LocalTime.now();
+        
+        System.out.println("Start tidspunkt : " + before);
+        //ArrayList<TemporalPattern> patterns = tpMiner.TPMine(1700);
+        ArrayList<ClusterPattern> patterns = codMiner.CODMiner(5000, 43200, 86400);
 
+//          Random Commentar
+        int timeSpent = LocalTime.now().toSecondOfDay() - before.toSecondOfDay();
+        System.out.println("Before: " + before);
+        System.out.println("After: " + LocalTime.now());
+        System.out.println("Span in seconds: " + timeSpent);
+        System.out.println("Patterns:" + patterns.size());
+        System.out.println(patterns.size());
+        for (int i = 0; i < patterns.size(); i++){
+           System.out.println("Pattern = " + patterns.get(i).Pattern.toString());        
+        }
     }
+    
 
 
     
