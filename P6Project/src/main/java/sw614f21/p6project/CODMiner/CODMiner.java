@@ -2,9 +2,6 @@ package sw614f21.p6project.CODMiner;
 
 import sw614f21.p6project.DataStructures.Endpoint;
 import sw614f21.p6project.DataStructures.EndpointSequence;
-import sw614f21.p6project.DataStructures.OccurrenceSequence;
-import sw614f21.p6project.Preprocessing.CSVReader;
-import sw614f21.p6project.Preprocessing.FakeDataSet2;
 import sw614f21.p6project.TPMiner.PatternSymbol;
 
 import java.util.ArrayList;
@@ -14,12 +11,12 @@ import java.io.IOException;
 
 public class CODMiner {
     public ArrayList<ClusterPattern> TP = new ArrayList<ClusterPattern>();
-    public int TimeThreshold;
+    public int GapConstraint;
     int DBSequenceID = 0;
 
-    public ArrayList<ClusterPattern> CODMiner(int minSupport, double maxClusterDeviation, int timeThreshold, ArrayList<EndpointSequence> OriginalDatabase) throws IOException{
+    public ArrayList<ClusterPattern> CODMiner(int minSupport, double maxClusterDeviation, int gapConstraint, ArrayList<EndpointSequence> OriginalDatabase) throws IOException{
 
-        TimeThreshold = timeThreshold;
+        GapConstraint = gapConstraint;
         // Getting the frequent endpoints.
         ArrayList<ClusterSymbol> FE = GetFrequentStartingEndpoints(OriginalDatabase, minSupport);
 
@@ -165,10 +162,10 @@ public class CODMiner {
 
             Endpoint oldEndpoint = endpointSequence.Sequence.get(position);
             Endpoint endpointCopy = new Endpoint(oldEndpoint.EventID, oldEndpoint.Timestamp - timestamp, oldEndpoint.Start, oldEndpoint.OccurrenceID);
-            // Stop projecting if the current timestamp exceeds the TimeThreshold parameter.
-//            if (endpointCopy.Timestamp > TimeThreshold){
-//                break;
-//            }
+            // Stop projecting if the current timestamp exceeds the GapConstraint parameter.
+            if (endpointCopy.Timestamp > GapConstraint){
+                break;
+            }
             newEndpointSequence.Sequence.add(endpointCopy);
         }
         // Only add non-empty sequences to the projected database.

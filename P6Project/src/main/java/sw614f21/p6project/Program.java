@@ -20,20 +20,20 @@ public class Program {
         ArrayList<OccurrenceSequence> occurrenceDB = CSVReader.GetBenchmarkSequences();
         ArrayList<EndpointSequence> OriginalDatabase  = CSVReader.GetEndpointSequences(occurrenceDB);
         
-        // mini synthetic data set.
+        // Mini synthetic data set.
         // FakeDataSet2 FS = new FakeDataSet2();
         // ArrayList<EndpointSequence> OriginalDatabase = FS.GetFakeData();
         
         
-        TPMiner tpMiner = new TPMiner();
-        //CODMiner codMiner = new CODMiner();
+//        TPMiner tpMiner = new TPMiner();
+        CODMiner codMiner = new CODMiner();
 
         Runtime.getRuntime().gc();
         LocalTime before = LocalTime.now();
         
         System.out.println("Start tidspunkt : " + before);
-        ArrayList<TemporalPattern> patterns = tpMiner.TPMiner(1700, OriginalDatabase);
-        // ArrayList<ClusterPattern> patterns = codMiner.CODMiner(5000, 43200, 86400, OriginalDatabase);
+//        ArrayList<TemporalPattern> patterns = tpMiner.TPMiner(1700, OriginalDatabase);
+         ArrayList<ClusterPattern> patterns = codMiner.CODMiner(5000, 3600, 86400, OriginalDatabase);
 
         int timeSpent = LocalTime.now().toSecondOfDay() - before.toSecondOfDay();
         System.out.println("Before: " + before);
@@ -42,7 +42,7 @@ public class Program {
         System.out.println("Patterns:" + patterns.size());
         System.out.println(patterns.size());
         for (int i = 0; i < patterns.size(); i++){
-           System.out.println("Pattern = " + patterns.get(i).TPattern.toString());        
+           System.out.println("Pattern = " + patterns.get(i).Pattern.toString());
         }
     }
     
