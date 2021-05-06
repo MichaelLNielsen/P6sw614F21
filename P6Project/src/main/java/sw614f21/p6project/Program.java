@@ -9,6 +9,8 @@ import sw614f21.p6project.TPMiner.TemporalPattern;
 import java.io.IOException;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collections;
+
 import sw614f21.p6project.DataStructures.EndpointSequence;
 
 public class Program {
@@ -33,7 +35,8 @@ public class Program {
         
         System.out.println("Start tidspunkt : " + before);
 //        ArrayList<TemporalPattern> patterns = tpMiner.TPMiner(1700, OriginalDatabase);
-         ArrayList<ClusterPattern> patterns = codMiner.CODMiner(5000, 3600, 86400, OriginalDatabase);
+        ArrayList<ClusterPattern> patterns = codMiner.CODMiner(2000, 3600 * 3, 86400, OriginalDatabase);
+        Collections.sort(patterns);
 
         int timeSpent = LocalTime.now().toSecondOfDay() - before.toSecondOfDay();
         System.out.println("Before: " + before);
@@ -42,7 +45,7 @@ public class Program {
         System.out.println("Patterns:" + patterns.size());
         System.out.println(patterns.size());
         for (int i = 0; i < patterns.size(); i++){
-           System.out.println("Pattern = " + patterns.get(i).Pattern.toString());
+           System.out.println("Pattern = " + patterns.get(i).Pattern.toString() + " Support: " + patterns.get(i).Support);
         }
     }
     

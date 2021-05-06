@@ -196,7 +196,8 @@ public class CODMiner {
             if (IsClusterPattern(alphaPrime)){
                 ClusterPattern newPattern = new ClusterPattern();
                 newPattern.Pattern.addAll(alphaPrime.Pattern);
-                TP.add(alphaPrime);
+                newPattern.Support = FE.get(i).ClusterElements.size();
+                TP.add(newPattern);
             }
 
             // Project the database further with respect to alpha prime.
