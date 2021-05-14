@@ -23,6 +23,7 @@ public class CODMiner {
         // Find more patterns extended from the current endpoint.
         for (int i = 0; i < FE.size(); i++){
             ClusterSymbol symbol = new ClusterSymbol(FE.get(i).EventID, FE.get(i).Start, FE.get(i).Mean, FE.get(i).Deviation);
+            symbol.symbolData = FE.get(i).symbolData;
             ArrayList<EndpointSequence> projectedDB = GetProjectedDB(OriginalDatabase, symbol);
 
             ClusterPattern temp = new ClusterPattern();
@@ -91,10 +92,11 @@ public class CODMiner {
             // The result list is formed by the frequent starting symbols found.
             // Furthermore, descriptive statistics are calculated.
             if (symbolData.size() >= minSupport) {
-
+                
                 double mean = FindMean(symbolData);
                 double deviation = GetIntegerDeviation(symbolData, mean);
                 ClusterSymbol symbol = new ClusterSymbol(type, true, mean, deviation);
+                symbol.symbolData = symbolData;
                 
                 resultList.add(symbol);
             }
